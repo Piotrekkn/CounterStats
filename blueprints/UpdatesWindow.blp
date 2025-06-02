@@ -1,0 +1,68 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box updates_window {
+  vexpand: true;
+  hexpand: true;
+  orientation: vertical;
+
+  Gtk.Box {
+    vexpand: true;
+    hexpand: true;
+
+    Adw.Carousel carousel {
+      spacing: 50;
+      interactive: true;
+      vexpand: true;
+      hexpand: true;
+
+      Gtk.Spinner {
+        hexpand: true;
+        vexpand: true;
+        halign: center;
+        valign: center;
+        spinning: true;
+        width-request: 40;
+        height-request: 40;
+      }
+    }
+  }
+
+  Gtk.Box {
+    height-request: 40;
+    orientation: horizontal;
+    hexpand: true;
+
+    Gtk.Button button_left {
+      halign: start;
+      margin-start: 10;
+      margin-bottom: 10;
+      height-request: 40;
+      width-request: 40;
+      icon-name: "go-next-symbolic-rtl";
+
+      styles [
+        "circular",
+      ]
+    }
+
+    Adw.CarouselIndicatorDots {
+      carousel: carousel;
+      halign: center;
+      hexpand: true;
+    }
+
+    Gtk.Button button_right {
+      halign: end;
+      height-request: 40;
+      width-request: 40;
+      margin-end: 10;
+      margin-bottom: 10;
+      icon-name: "go-next-symbolic";
+
+      styles [
+        "circular",
+      ]
+    }
+  }
+}

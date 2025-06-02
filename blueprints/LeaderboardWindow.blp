@@ -1,0 +1,93 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box leaderboard_window {
+  vexpand: true;
+  hexpand: true;
+  orientation: vertical;
+
+  Adw.ClampScrollable {
+    width-request: 900;
+    vexpand: true;
+    hexpand: true;
+
+    Gtk.Box {
+      vexpand: true;
+      hexpand: true;
+      orientation: vertical;
+
+      Gtk.Box {
+        hexpand: true;
+        orientation: horizontal;
+
+        Gtk.Box {
+          hexpand: true;
+          orientation: vertical;
+
+          Gtk.Label labelName {
+            width-request: 600;
+            xalign: 0;
+            hexpand: true;
+            label: _("Leaderboards");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.Label labelName2 {
+            xalign: 0;
+            hexpand: true;
+            label: _("");
+
+            styles [
+              'title-4',
+            ]
+          }
+        }
+
+        Gtk.Box {
+          width-request: 150;
+
+          Gtk.ToggleButton buttonSmallLeader {
+            width-request: 30;
+            height-request: 30;
+            icon-name: "open-menu-symbolic";       
+            vexpand: false;
+            hexpand: false;
+          }
+
+          Gtk.DropDown dropdown {
+            width-request: 150;
+            height-request: 30;
+            vexpand: false;
+            hexpand: false;         
+          }
+        }
+      }
+
+      ScrolledWindow {
+        Gtk.Box leaderboardBox {
+          hexpand: true;
+          vexpand: true;
+          orientation: vertical;
+
+          styles [
+            'boxed-list',
+            'flat',
+          ]
+
+          Gtk.Spinner {
+            hexpand: true;
+            vexpand: true;
+            halign: center;
+            valign: center;
+            spinning: true;
+            width-request: 40;
+            height-request: 40;
+          }
+        }
+      }
+    }
+  }
+}

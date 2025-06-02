@@ -1,0 +1,220 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow main_window {
+  default-width: 1200;
+  default-height: 850;
+  title: "Counter Stats";
+
+  Adw.Breakpoint {
+    condition ("max-width:1100")
+
+    setters {
+      split_view.collapsed: true;
+    }
+  }
+
+  content: Adw.OverlaySplitView split_view {
+    [sidebar]
+    Adw.NavigationPage {
+      title: _("Counter Stats");
+
+      [child]
+      Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {
+          styles [
+            "flat",
+          ]
+
+          [title]
+          Adw.WindowTitle {
+            title: "Counter Stats";
+          }
+
+          [end]
+          MenuButton {
+            tooltip-text: _("Main Menu");
+            icon-name: "open-menu-symbolic";
+            menu-model: primary_menu;
+            primary: true;
+          }
+        }
+
+        ScrolledWindow {
+          hscrollbar-policy: never;
+
+          Gtk.ListBox listview {
+            vexpand: true;
+            name: "zzz";
+
+            styles [
+              "navigation-sidebar",
+            ]
+
+            Gtk.ListBoxRow profile_box_row {
+              name: "profile-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                Gtk.Image {
+                  icon-name: "avatar-default-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Your Profile";
+                }
+              }
+            }
+
+            Gtk.ListBoxRow updates-box-row {
+              name: "updates-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                Gtk.Image {
+                  icon-name: "software-update-available-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Game Updates";
+                }
+              }
+            }
+
+            Gtk.ListBoxRow leaderboard-box-row {
+              name: "leaderboard-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                styles [
+                  "navigation-sidebar",
+                ]
+
+                Gtk.Image {
+                  icon-name: "applications-games-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Leaderboards";
+                }
+              }
+            }
+
+            Gtk.ListBoxRow stats-box-row {
+              name: "stats-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                styles [
+                  "navigation-sidebar",
+                ]
+
+                Gtk.Image {
+                  icon-name: "view-list-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Player Statstics";
+                }
+              }
+            }
+
+            [bottom]
+            Gtk.ListBoxRow findplayer-box-row {
+              name: "findplayer-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                styles [
+                  "navigation-sidebar",
+                ]
+
+                Gtk.Image {
+                  icon-name: "system-search-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Find Player Stats";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    [content]
+    Adw.NavigationPage {
+      hexpand: true;
+      vexpand: true;
+
+      child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {
+          [start]
+          Gtk.Button show_sidebar_button {
+            icon-name: "sidebar-show-symbolic";
+          }
+
+          [title]
+          Adw.WindowTitle window_title {
+            title: "Counter Stats";
+          }
+        }
+
+        WindowHandle {
+          Box window {
+            hexpand: true;
+            vexpand: true;
+
+            WindowHandle {
+              hexpand: true;
+              vexpand: true;
+
+              Stack stack {
+                hexpand: true;
+                vexpand: true;
+              }
+            }
+          }
+        }
+      };
+    }
+  };
+}
+
+menu primary_menu {
+  section {
+    item (_("Preferences"), "app.preferences")
+  }
+
+  section {
+    item (_("Keyboard Shortcuts"), "app.keyboardShortcuts")
+    item (_("About Counter Stats"), "app.about")
+  }
+
+  section {
+    item (_("Quit"), "app.quit")
+  }
+}

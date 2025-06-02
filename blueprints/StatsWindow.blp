@@ -1,0 +1,33 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box statsWindow {
+  vexpand: true;
+  hexpand: true;
+  orientation: vertical;
+
+  Adw.Banner banner {
+    revealed: false;
+  }
+
+  Adw.ClampScrollable {
+    vexpand: true;
+    hexpand: true;
+
+    Gtk.Box statsWindowBox {
+      orientation: horizontal;
+      vexpand: true;
+      hexpand: true;
+
+      Gtk.Spinner {
+        hexpand: true;
+        vexpand: true;
+        halign: center;
+        valign: center;
+        spinning: true;
+        width-request: 40;
+        height-request: 40;
+      }
+    }
+  }
+}

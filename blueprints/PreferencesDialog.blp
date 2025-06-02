@@ -1,0 +1,74 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.PreferencesDialog preferencesDialog {
+  title: _("Counter Stats Global Preferences");
+
+  Adw.PreferencesPage {
+    icon-name: 'applications-system-symbolic';
+    title: _("General");
+
+    Adw.PreferencesGroup {
+      title: _("API");
+
+      Adw.ActionRow api_action_row {
+        title: _("API Key");
+        subtitle: _("You can obtain your steam web api key at: https://steamcommunity.com/dev/apikey");
+      }
+
+      Adw.PasswordEntryRow api_entry_row {
+        title: _("API Key");
+      }
+
+      Adw.EntryRow steam_profile_entry_row {
+        title: _("Steam profile");
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Game Updates");
+
+      Adw.SpinRow updates_number_spin_row {
+        title: _("How much recent updates to fetch?");
+        focusable: true;
+        numeric: true;
+      }
+
+      Adw.SwitchRow updates_markup_switch_row {
+        title: _("Use markup in updates section");
+        focusable: true;
+        active: true;
+      }
+    }
+  }
+
+  Adw.PreferencesPage storages_page {
+    icon-name: 'drive-harddisk-symbolic';
+    title: _("Storage");
+
+    Adw.PreferencesGroup {
+      title: _("Clear Storage");
+
+      Adw.SwitchRow clear_cache_switch {
+        title: _("Clear Cache on Exit");
+        subtitle: _("Clear all the temporary files when exiting the application.");
+      }
+
+      Adw.ButtonRow clear_cache_button {
+        title: _("Clear Cache");
+
+        styles [
+          'warning',
+        ]
+      }
+
+      Adw.ButtonRow clear_data_button {
+        title: _("Remove all data and cache");
+
+        styles [
+          'destructive-action',
+        ]
+      }
+    }
+  }
+}
