@@ -9,6 +9,25 @@ Adw.PreferencesDialog preferencesDialog {
     title: _("General");
 
     Adw.PreferencesGroup {
+      title: _("General");
+
+      Adw.ComboRow window_combo_row {
+        title: _("Starting window");
+        subtitle: _("You can obtain your steam web api k!");
+
+        model: StringList {
+          strings [
+            _("Your Profile"),
+            _("Game Updates"),
+            _("Inventory"),
+            _("Leaderboards"),
+            _("Player Statistics")            
+          ]
+        };
+      }
+    }
+
+    Adw.PreferencesGroup {
       title: _("API");
 
       Adw.ActionRow api_action_row {

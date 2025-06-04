@@ -210,7 +210,7 @@ public class ProfileWindow : Gtk.Box
         {
             long dateLong = (long)Convert.ToDouble(player.SelectToken("$.timecreated").ToString());
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
-            timeCreated.SetText("Account created:\n" + dateTime.ToString());
+            timeCreated.SetText("Account created:\n" + dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"));
         }
         SetBackground();
         FetchData2();

@@ -89,6 +89,24 @@ Adw.ApplicationWindow main_window {
                 }
               }
             }
+             Gtk.ListBoxRow inventory-box-row {
+              name: "inventory-window";
+
+              styles [
+                "navigation-sidebar",
+              ]
+
+              Gtk.Box {
+                Gtk.Image {
+                  icon-name: "software-update-available-symbolic";
+                  margin-end: 6;
+                }
+
+                Gtk.Label {
+                  label: "Inventory";
+                }
+              }
+            }
 
             Gtk.ListBoxRow leaderboard-box-row {
               name: "leaderboard-window";

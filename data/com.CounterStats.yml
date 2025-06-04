@@ -1,4 +1,4 @@
-app-id: com.CounterStats
+app-id: org.CounterStats
 runtime: org.gnome.Platform
 runtime-version: "43"
 sdk: org.gnome.Sdk
@@ -15,11 +15,11 @@ modules:
     build-commands:
       - "install -D CounterStats /app/bin/CounterStats"
       - "install -D run.sh /app/bin/run.sh"
-      - "install -D com.CounterStats.Desktop /app/share/applications/com.CounterStats.desktop"
+      - "install -D org.CounterStats.Desktop /app/share/applications/org.CounterStats.desktop"
     sources:
       - type: file
         path: CounterStats
       - type: file
         path: run.sh
       - type: file
-        path: com.CounterStats
+        path: org.CounterStats

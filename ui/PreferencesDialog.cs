@@ -9,6 +9,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.SwitchRow clear_cache_switch;
     [Gtk.Connect] private readonly Adw.EntryRow steam_profile_entry_row;
     [Gtk.Connect] private readonly Adw.SpinRow updates_number_spin_row;
+    [Gtk.Connect] private readonly Adw.ComboRow window_combo_row;
     private MainWindow mainWindow;
     private ConfigurationManager configuration;
 
@@ -39,6 +40,9 @@ public class PreferencesDialog : Adw.PreferencesDialog
         //buttons
         clear_cache_button.OnActivated += (_, _) => configuration.ClearCache();
         clear_data_button.OnActivated += (_, _) => configuration.ClearData();
+        //default window combo row
+        window_combo_row.SetSelected((uint)configuration.DefaultWindow);
+        window_combo_row.OnNotify += (_, _) => { configuration.DefaultWindow = (int)window_combo_row.GetSelected(); };
     }
 
 }

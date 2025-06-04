@@ -1,4 +1,5 @@
 namespace ui;
+
 using Newtonsoft.Json.Linq;
 
 public class UpdatesWindow : Gtk.Box
@@ -22,7 +23,7 @@ public class UpdatesWindow : Gtk.Box
         OnRealize += (sender, e) => Fetch();
         carousel.OnPageChanged += (_, e) => { currentPos = e.Index; };
         OnMap += (_, _) => mainWindow.SetTitle("Game Updates");
-        mainWindow.SetTitle("Game Updates");       
+        mainWindow.SetTitle("Game Updates");
     }
 
     private void AppendPosts(string data)
@@ -36,12 +37,16 @@ public class UpdatesWindow : Gtk.Box
 
         foreach (JToken item in appnews.SelectToken("$.newsitems"))
         {
-            JToken contents = item.SelectToken("$.contents");
-            JToken title = item.SelectToken("$.title");
-            JToken date = item.SelectToken("$.date");
-            long dateLong = (long)Convert.ToDouble(date.ToString());
+            string contents = item.SelectToken("$.contents").ToString();
+            string title = item.SelectToken("$.title").ToString();
+            string url = item.SelectToken("$.url").ToString();
+            string feedname = item.SelectToken("$.feedlabel").ToString();
+            //date
+            string date = item.SelectToken("$.date").ToString();
+            long dateLong = (long)Convert.ToDouble(date);
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
-            carousel.Append(Post(contents.ToString(), dateTime.ToString(), title.ToString()));
+            //append
+            carousel.Append(Post(contents, dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"), title, feedname, url));
         }
     }
     private void MoveToNextPage()
@@ -49,14 +54,14 @@ public class UpdatesWindow : Gtk.Box
         if (currentPos < carousel.GetNPages() - 1)
         {
             carousel.ScrollTo(carousel.GetNthPage(currentPos + 1), true);
-        }      
+        }
     }
     private void MoveToPrevPage()
     {
         if (currentPos > 0)
         {
             carousel.ScrollTo(carousel.GetNthPage(currentPos - 1), true);
-        }    
+        }
     }
     private string FormatTextForMarkup(string textToFormat)
     {
@@ -68,21 +73,28 @@ public class UpdatesWindow : Gtk.Box
         textToFormat = System.Text.RegularExpressions.Regex.Replace(textToFormat, @"\[(.*?)\]", "");
         return textToFormat;
     }
-    private Gtk.ScrolledWindow Post(string contents, string date, string title)
+    private Gtk.ScrolledWindow Post(string contents, string date, string title, string feedname, string url)
     {
         Gtk.ScrolledWindow scrolledWindow = new Gtk.ScrolledWindow();
         Gtk.Box box = new Gtk.Box();
         box.SetOrientation(Gtk.Orientation.Vertical);
         //title
         Gtk.Label titleLabel = new Gtk.Label();
+        Gtk.Label titleLabel2 = new Gtk.Label();
         box.Append(titleLabel);
+        box.Append(titleLabel2);
         titleLabel.SetText(title);
         titleLabel.AddCssClass("title-1");
         titleLabel.SetHexpand(true);
-        titleLabel.SetMarginBottom(20);
+        titleLabel.SetMarginBottom(5);
+        titleLabel2.SetText(feedname);
+        titleLabel2.AddCssClass("title-2");
+        titleLabel2.SetHexpand(true);
+        titleLabel2.SetMarginBottom(10);
         Gtk.Box boxleft = new Gtk.Box();
         boxleft.SetVexpand(true);
         boxleft.SetHexpand(true);
+        boxleft.SetOrientation(Gtk.Orientation.Vertical);
         Gtk.Label contentsLabel = new Gtk.Label();
         contentsLabel.Wrap = true;
         contentsLabel.SetUseMarkup(true);
@@ -97,24 +109,42 @@ public class UpdatesWindow : Gtk.Box
         }
         contentsLabel.SetHexpand(true);
         contentsLabel.SetVexpand(true);
-        boxleft.Append(contentsLabel);
+
+        Gtk.Box boxInfo = new Gtk.Box();
+        boxInfo.SetMarginBottom(10);
+        //boxleft.SetVexpand(true);
+        //boxleft.SetHexpand(true);
         Gtk.Label dateLabel = new Gtk.Label();
+
         dateLabel.SetText(date);
-        boxleft.Append(dateLabel);
+        dateLabel.AddCssClass("title-4");
+        Gtk.Label urlLabel = new Gtk.Label();
+        urlLabel.SetXalign(1);
+        urlLabel.SetValign(Gtk.Align.Center);
+        urlLabel.SetHexpand(true);
+         
+        urlLabel.SetMarkup("<a href='" + url +"'>Web link</a>");
+        
+        urlLabel.SetTooltipText(url);
+        
+        boxInfo.Append(dateLabel);
+        boxInfo.Append(urlLabel);
+        boxleft.Append(boxInfo);
+        boxleft.Append(contentsLabel);
         box.Append(boxleft);
         scrolledWindow.SetChild(box);
         scrolledWindow.SetHexpand(true);
         scrolledWindow.SetVexpand(true);
-        box.SetMarginEnd(20);
-        box.SetMarginStart(20);
-        box.SetMarginBottom(10);
+        box.SetMarginEnd(30);
+        box.SetMarginStart(30);
+        box.SetMarginBottom(20);
         box.SetHexpand(true);
         box.SetVexpand(true);
         return scrolledWindow;
     }
 
     private void CleanChildren()
-    {      
+    {
         Gtk.Widget toRemove = carousel.GetLastChild();
         //clear window
         while (toRemove != null)
@@ -147,7 +177,7 @@ public class UpdatesWindow : Gtk.Box
                             AppendPosts(data);
                         }
                         else
-                        {                            
+                        {
                             //ALERT?
                         }
                     }
