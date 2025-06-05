@@ -2,7 +2,6 @@ namespace ui;
 
 using System.Net;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using GdkPixbuf;
 using GLib;
 using Newtonsoft.Json.Linq;
@@ -19,6 +18,7 @@ public class InventoryWindow : Gtk.Box
     private string baseURLstart = "https://steamcommunity.com/inventory/";
     private string baseURLend = "/730/2";
     private string baseURL;
+    private string marketPriceUrl = "https://steamcommunity.com/market/priceoverview/?appid=730&currency=1&market_hash_name=";
     MainWindow mainWindow;
     private InventoryWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
@@ -84,14 +84,20 @@ public class InventoryWindow : Gtk.Box
         {
             var namee = item.SelectToken("$.market_name");
             if (namee != null)
-            {
-                Console.WriteLine(item.ToString());
+            {               
                 var type = item.SelectToken("$.type");
                 var imageUrlName = item.SelectToken("$.icon_url");
                 var color = item.SelectToken("$.name_color");
+                var marketHashName = item.SelectToken("$.market_hash_name");
                 //get rarity color and item type
                 var tags = item.SelectToken("$.tags");
                 var itemTag = type;
+                string inspectUrlString = "";
+                var inspectUrl = item.SelectToken("$.market_actions");
+                if (inspectUrl != null && inspectUrl[0].SelectToken("$.link") != null)
+                {
+                    inspectUrlString = inspectUrl[0].SelectToken("$.link").ToString();
+                }
                 foreach (JToken tag in tags)
                 {
                     if (tag.SelectToken("$.category").ToString() == "Rarity")
@@ -109,7 +115,7 @@ public class InventoryWindow : Gtk.Box
                     }
                 }
 
-                flowBox.Append(itemBox(namee.ToString(), type.ToString(), imageUrl + imageUrlName.ToString() + "/?allow_animated=0", color.ToString(), itemTag.ToString()));
+                flowBox.Append(itemBox(namee.ToString(), type.ToString(), imageUrl + imageUrlName.ToString() + "/?allow_animated=0", color.ToString(), itemTag.ToString(), marketHashName.ToString(), inspectUrlString));
                 limit--;
                 if (limit == 0)
                 {
@@ -120,19 +126,9 @@ public class InventoryWindow : Gtk.Box
         inventory_box.Append(flowBox);
     }
 
-    private async Task SetItemImage(Gtk.Image image, string url)
-    {
-        using (var webClient = new WebClient())
-        {
 
-            byte[] imageBytes = await webClient.DownloadDataTaskAsync(url);
-            Pixbuf pixbuf = FromBytes(imageBytes);
-            image.SetFromPixbuf(pixbuf);
-        }
 
-    }
-
-    private Gtk.Box itemBox(string name, string type, string imageUrl, string color, string itemTag)
+    private Gtk.Box itemBox(string name, string type, string imageUrl, string color, string itemTag, string marketHashName, string inspectUrl)
     {
         Gtk.Box box = new Gtk.Box();
         box.SetCssClasses(["card"]);
@@ -165,13 +161,80 @@ public class InventoryWindow : Gtk.Box
         labelTag.SetMarginBottom(6);
         labelType.SetLabel(type);
         labelType.SetMarginBottom(8);
-
+        //top box
+        Gtk.Label labelPrice = new Gtk.Label();
+        Gtk.Label labelInspect = new Gtk.Label();
+        labelInspect.SetHalign(Gtk.Align.End);
+        labelInspect.SetHexpand(true);
+        Gtk.Box headerBox = new Gtk.Box();
+        headerBox.SetHexpand(true);
+        headerBox.SetOrientation(Gtk.Orientation.Horizontal);
+        headerBox.Append(labelPrice);
+        headerBox.Append(labelInspect);
+        headerBox.SetMarginBottom(5);
+        headerBox.SetMarginEnd(8);
+        headerBox.SetMarginStart(8);
+        headerBox.SetMarginTop(8);        
+        if (!string.IsNullOrEmpty(inspectUrl))
+            labelInspect.SetMarkup("<a href='" + inspectUrl.ToString() + "'>Inspect</a>");
+        //end top box 
+        box.Append(headerBox);
         box.Append(image);
         box.Append(labelTag);
-        box.Append(labelName);        
+        box.Append(labelName);
         box.Append(labelType);
+        //set aditional data
         SetItemImage(image, imageUrl);
+        SetItemPrice(labelPrice, marketHashName);
+
         return box;
+    }
+    private async Task SetItemImage(Gtk.Image image, string url)
+    {
+        using (var webClient = new WebClient())
+        {
+
+            byte[] imageBytes = await webClient.DownloadDataTaskAsync(url);
+            Pixbuf pixbuf = FromBytes(imageBytes);
+            image.SetFromPixbuf(pixbuf);
+        }
+
+    }
+    private async Task SetItemPrice(Gtk.Label labelPrice, string marketHashName)
+    {
+        string url = marketPriceUrl + marketHashName;
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.GetAsync(url))
+                {
+                    res.EnsureSuccessStatusCode();
+                    using (HttpContent content = res.Content)
+                    {
+                        string data = await content.ReadAsStringAsync();
+                        if (data != null)
+                        {
+                            JObject obj = JObject.Parse(data);
+                            JToken price = obj.SelectToken("$.lowest_price");
+
+                            labelPrice.SetText(price.ToString());
+                        }
+                        else
+                        {
+                            //alert
+                        }
+                    }
+                }
+            }
+
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            labelPrice.SetText("too many request");
+        }
+
     }
     private static Pixbuf FromBytes(byte[] data)
     {
