@@ -1,4 +1,5 @@
-public static class Constants
+namespace CounterStats;
+public static class Globals
 {
     /// <summary>The application ID that is used to identify your application,
     /// see https://developer.gnome.org/documentation/tutorials/application-id.html.
@@ -20,5 +21,5 @@ public static class Constants
     public const string APP_DISPLAY_NAME = "Counter Stats";
 
     public const string VERSION = "alpha.0";
-    
+
 }

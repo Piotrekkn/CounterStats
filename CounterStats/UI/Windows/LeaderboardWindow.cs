@@ -1,4 +1,5 @@
-namespace ui;
+namespace CounterStats.UI.Windows;
+
 using Newtonsoft.Json.Linq;
 
 public class LeaderboardWindow : Gtk.Box
@@ -10,17 +11,17 @@ public class LeaderboardWindow : Gtk.Box
     private string[] regions = new string[8] { "World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa" };
     private string title = "";
     private string subtitle = "";
-    MainWindow mainWindow;
+    MainApp mainApp;
     private LeaderboardWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public LeaderboardWindow(MainWindow mainWindow) : this(new Gtk.Builder("LeaderboardWindow.ui"), "leaderboard_window")
+    public LeaderboardWindow(MainApp mainApp) : this(new Gtk.Builder("LeaderboardWindow.ui"), "leaderboard_window")
     {
-        this.mainWindow = mainWindow;
+        this.mainApp = mainApp;
         OnRealize += (sender, e) => Fetch();
         buttonSmallLeader.OnClicked += (sender, e) => Fetch((int)dropdown.GetSelected());
-        OnMap += (_, _) => mainWindow.SetTitle(title, subtitle);
+        OnMap += (_, _) => mainApp.SetTitle(title, subtitle);
         SetTitle("Leaderboards", regions[0]);
         //dropdown menu
         dropdown.SetModel(Gtk.StringList.New(regions));
@@ -35,7 +36,7 @@ public class LeaderboardWindow : Gtk.Box
     {
         this.title = title;
         this.subtitle = subtitle;
-        mainWindow.SetTitle(title, subtitle);
+        mainApp.SetTitle(title, subtitle);
     }
     private void CleanChildren()
     {

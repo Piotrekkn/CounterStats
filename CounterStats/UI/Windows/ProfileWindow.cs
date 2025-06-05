@@ -1,12 +1,8 @@
-namespace ui;
+namespace CounterStats.UI.Windows;
 using Newtonsoft.Json.Linq;
-using Gtk;
 
 public class ProfileWindow : Gtk.Box
 {
-
-    [Gtk.Connect] private readonly Gtk.Box profileWindowBox;
-    [Gtk.Connect] private readonly Gtk.Box imageBox;
     [Gtk.Connect] private readonly Gtk.Image profileImage;
     [Gtk.Connect] private readonly Gtk.Box profileWindow;
     [Gtk.Connect] private readonly Gtk.Label labelRealName;
@@ -23,13 +19,12 @@ public class ProfileWindow : Gtk.Box
     private string title = "";
     private string subtitle = "";
     private ConfigurationManager configuration;
-    private MainWindow mainWindow;
-
+    private MainApp mainWindow;
     private ProfileWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public ProfileWindow(MainWindow mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("ProfileWindow.ui"), "profileWindow")
+    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("ProfileWindow.ui"), "profileWindow")
     {
         this.mainWindow = mainWindow;
         this.configuration = configuration;
@@ -45,21 +40,9 @@ public class ProfileWindow : Gtk.Box
         mainWindow.SetTitle(title, subtitle);
     }
 
-
-    private void CleanChildren()
-    {
-        return;
-        Gtk.Widget toRemove = profileWindowBox.GetLastChild();
-        //clear window
-        while (toRemove != null)
-        {
-            profileWindowBox.Remove(toRemove);
-            toRemove = profileWindowBox.GetLastChild();
-        }
-
-    }
     private async void SetBackground()
     {
+
         string baseURL = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + configuration.ApiKey + "&steamid=" + configuration.SteamProfile;
         try
         {
@@ -77,7 +60,6 @@ public class ProfileWindow : Gtk.Box
                             {
                                 return;
                             }
-
                             JToken player = obj.SelectToken("$.response").SelectToken("$.profile_background").SelectToken("$.image_large");
                             string image = "https://cdn.fastly.steamstatic.com/steamcommunity/public/images/" + player.ToString();
 
@@ -88,14 +70,12 @@ public class ProfileWindow : Gtk.Box
                                 byte[] imageBytes = await client2.GetByteArrayAsync(image);
                                 await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
                             }
-
-                            string dataa = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
+                            string cssData = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
                             Gtk.CssProvider cssProvider = new Gtk.CssProvider();
-                            cssProvider.LoadFromString(dataa);
+                            cssProvider.LoadFromString(cssData);
                             profileWindow.AddCssClass("profileWindowBox");
                             Gdk.Display display = Gdk.Display.GetDefault();
-                            StyleContext.AddProviderForDisplay(display, cssProvider, 0);
-
+                            Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
                         }
                         else
                         {
@@ -104,43 +84,16 @@ public class ProfileWindow : Gtk.Box
                     }
                 }
             }
-
         }
         catch (Exception exception)
         {
             Console.WriteLine(exception);
         }
     }
-
-    private Gtk.Image imageFromUrl(string url)
-    {
-        Gtk.Image image = new Gtk.Image();
-        image.SetFromFile(url);
-        return image;
-    }
-
-    private void Loading()
-    {
-        CleanChildren();
-        return;
-        Gtk.Box box = new Gtk.Box();
-        box.SetHexpand(true);
-        box.SetVexpand(true);
-        Gtk.Spinner spinner = new Gtk.Spinner();
-        Gtk.Label label = new Gtk.Label();
-        label.SetHexpand(true);
-        label.SetVexpand(true);
-        label.SetText("Loading");
-        profileWindowBox.Append(box);
-        box.Append(spinner);
-        box.Append(label);
-
-    }
-
     private void Fetch()
     {
         banner.SetRevealed(false);
-        Loading();
+
         if (String.IsNullOrEmpty(configuration.ApiKey))
         {
             SetBanner("API is empty, make sure to set it in the prefrences");
@@ -152,16 +105,14 @@ public class ProfileWindow : Gtk.Box
     private void SetBanner(string text)
     {
         Console.WriteLine($"Banner: {text}");
-
         banner.SetTitle(text);
         banner.SetRevealed(true);
-
-
     }
 
     private async void SetData(string data)
     {
-
+        SetBackground();
+        FetchData2();
         JObject obj;
         if (data.Contains("{\"response\":{\"players\":[]}}"))
         {
@@ -186,13 +137,9 @@ public class ProfileWindow : Gtk.Box
             {
                 SetBanner("Error parsing data");
             }
-
             return;
-
         }
         //check for profile id
-        
-
         JToken player = obj.SelectToken("$.response").SelectToken("$.players")[0];
         Console.WriteLine(player.SelectToken("$.avatar").ToString());
         labelName.SetText(player.SelectToken("$.personaname").ToString());
@@ -212,8 +159,6 @@ public class ProfileWindow : Gtk.Box
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
             timeCreated.SetText("Account created:\n" + dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"));
         }
-        SetBackground();
-        FetchData2();
     }
 
     private async void SetAvatar(string url)
@@ -228,7 +173,7 @@ public class ProfileWindow : Gtk.Box
         profileImage.SetFromFile(dir);
     }
     private async void FetchData()
-    {// 
+    {
         string baseURL = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + configuration.ApiKey + "&steamids=" + configuration.SteamProfile;
         try
         {
@@ -255,10 +200,8 @@ public class ProfileWindow : Gtk.Box
         catch (Exception exception)
         {
             Console.WriteLine(exception);
-
         }
     }
-
     private async void FetchData2()
     {
         string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + configuration.ApiKey + "&steamid=" + configuration.SteamProfile; ;
@@ -282,7 +225,6 @@ public class ProfileWindow : Gtk.Box
                     }
                 }
             }
-
         }
         catch (Exception exception)
         {
@@ -297,8 +239,6 @@ public class ProfileWindow : Gtk.Box
         ratio_label.SetLabel("KD Ratio");
         if (obj.SelectToken("$.playerstats") != null)
         {
-
-
             JToken stats = obj.SelectToken("$.playerstats").SelectToken("$.stats");
             int total_kills = 0;
             int total_deaths = 0;
@@ -324,7 +264,6 @@ public class ProfileWindow : Gtk.Box
                     total_kills_headshot = Convert.ToInt32(token.SelectToken("$.value"));
                 }
             }
-
             time_label_value.SetLabel(((int)total_time_played / 60 / 60).ToString() + "h");
             hs_label_value.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.###") + "%");
             ratio_label_value.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.###"));

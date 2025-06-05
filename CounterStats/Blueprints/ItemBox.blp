@@ -1,0 +1,49 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box itemBox {
+    css-classes: [
+        'card',
+    ];
+
+    width-request: 200;
+    height-request: 320;
+    orientation: vertical;
+
+    Gtk.Box headerBox {
+        hexpand: true;
+        orientation: horizontal;
+        margin-bottom: 5;
+        margin-end: 8;
+        margin-start: 8;
+        margin-top: 8;
+
+        Gtk.Label labelPrice {}
+
+        Gtk.Label labelInspect {
+            halign: end;
+            hexpand: true;
+        }
+    }
+
+    Gtk.Image image {
+        hexpand: true;
+        vexpand: true;
+        icon-size: large;
+        margin-end: 2;
+        margin-start: 2;
+        margin-top: 6;
+    }
+
+    Gtk.Label labelTag {
+        margin-bottom: 6;
+    }
+
+    Gtk.Label labelName {
+        margin-bottom: 6;
+    }
+
+    Gtk.Label labelType {
+        margin-bottom: 8;
+    }
+}

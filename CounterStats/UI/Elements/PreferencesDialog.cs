@@ -1,4 +1,4 @@
-namespace ui;
+namespace CounterStats.UI.Elements;
 
 public class PreferencesDialog : Adw.PreferencesDialog
 {
@@ -12,17 +12,17 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.ComboRow window_combo_row;
     [Gtk.Connect] private readonly Adw.SpinRow inventory_number_spin_row;
     [Gtk.Connect] private readonly Adw.ActionRow api_action_row;
-    private MainWindow mainWindow;
+    private MainApp mainApp;
     private ConfigurationManager configuration;
 
     private PreferencesDialog(Gtk.Builder builder, string name) : base(new Adw.Internal.PreferencesDialogHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public PreferencesDialog(MainWindow mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("PreferencesDialog.ui"), "preferencesDialog")
+    public PreferencesDialog(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("PreferencesDialog.ui"), "preferencesDialog")
     {
         this.configuration = configuration;
-        this.mainWindow = mainWindow;
+        this.mainApp = mainApp;
         //api entry
         api_entry_row.SetText(configuration.ApiKey);
         api_entry_row.OnNotify += (_, _) => { configuration.ApiKey = api_entry_row.GetText(); };

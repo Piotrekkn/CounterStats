@@ -1,10 +1,12 @@
-namespace ui;
+namespace CounterStats.UI;
 
+using CounterStats.UI.Windows;
+using CounterStats.UI.Elements;
 using Gio;
 using GObject;
 using HarfBuzz;
 
-public class MainWindow : Adw.ApplicationWindow
+public class MainApp : Adw.ApplicationWindow
 {
     [Gtk.Connect] private readonly Gtk.Stack stack;
     [Gtk.Connect] private readonly Adw.WindowTitle window_title;
@@ -18,11 +20,11 @@ public class MainWindow : Adw.ApplicationWindow
     private ProfileWindow? profileWindow;
     private LeaderboardWindow? leaderboardWindow;
     private InventoryWindow? inventoryWindow;
-    private MainWindow(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
+    private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public MainWindow(Adw.Application application) : this(new Gtk.Builder("MainWindow.ui"), "main_window")
+    public MainApp(Adw.Application application) : this(new Gtk.Builder("MainApp.ui"), "main_window")
     {
         this.Application = application;
         configurationManager = new ConfigurationManager(this);
@@ -53,12 +55,12 @@ public class MainWindow : Adw.ApplicationWindow
         listview.SelectRow(GetListBoxRowByID(configurationManager.DefaultWindow));
     }
     private void OnAboutAction()
-    {
+    {         
         var about = Adw.AboutDialog.New();
         about.ApplicationName = "Counter Stats";
         about.SetApplicationIcon("org.counterstats");
         about.DeveloperName = "El Bandito❦Mágico";
-        about.Version = VERSION;
+        about.Version = Globals.VERSION;
         about.Developers = ["El Bandito❦Mágico"];
         about.Copyright = "© 2025 El Bandito❦Mágico";
         about.AddLink("Source code at GitHub", "https://github.com/Piotrekkn/CounterStats");

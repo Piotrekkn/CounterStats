@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Pango;
-using ui;
+using CounterStats.UI;
 
 public class ConfigurationManager
 {
@@ -85,13 +85,13 @@ public class ConfigurationManager
         }
     }
     private int itemsNumber;
-    private MainWindow mainWindow;
+    private MainApp mainApp;
     private string cacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
     private string configDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
     private string configFile = "data.json";
-    public ConfigurationManager(MainWindow mainWindow)
+    public ConfigurationManager(MainApp mainApp)
     {
-        this.mainWindow = mainWindow;
+        this.mainApp = mainApp;
         Load();
     }
 
@@ -156,7 +156,7 @@ public class ConfigurationManager
         alertDialog.SetResponseAppearance("cancel", Adw.ResponseAppearance.Default);
         alertDialog.SetHeading("Do you want to delete cache data?");
         alertDialog.SetBody("This action will delete all the temporary files and cache data!");
-        alertDialog.Present(mainWindow);
+        alertDialog.Present(mainApp);
         //handle the response
         alertDialog.OnResponse += (_, response) =>
         {
@@ -177,7 +177,7 @@ public class ConfigurationManager
         alertDialog.SetResponseAppearance("cancel", Adw.ResponseAppearance.Default);
         alertDialog.SetHeading("Do you want to delete all of the configuration data?");
         alertDialog.SetBody("This action will delete all the configuration data (including apis and logins), temporary files and cache data!. Application will be closed");
-        alertDialog.Present(mainWindow);
+        alertDialog.Present(mainApp);
         //handle the response
         alertDialog.OnResponse += (_, res) =>
         {
@@ -187,7 +187,7 @@ public class ConfigurationManager
                 DeleteDirectory(cacheDir);
                 Console.WriteLine("cleaning config");
                 DeleteDirectory(configDir);
-                mainWindow.Application.Quit();
+                mainApp.Application.Quit();
             }
 
         };

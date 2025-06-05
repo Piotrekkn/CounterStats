@@ -1,0 +1,64 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.ScrolledWindow updatePost {
+    hexpand: true;
+    vexpand: true;
+
+    [child]
+    Gtk.Box box {
+        hexpand: true;
+        vexpand: true;
+        margin-bottom: 20;
+        margin-end: 30;
+        margin-start: 30;
+        orientation: vertical;
+
+        Gtk.Label titleLabel {
+            css-classes: [
+                'title-1',
+            ];
+
+            margin-bottom: 5;
+            hexpand: true;
+        }
+
+        Gtk.Label subtitleLabel {
+            css-classes: [
+                'title-2',
+            ];
+
+            margin-bottom: 10;
+            hexpand: true;
+        }
+
+        Gtk.Box boxleft {
+            orientation: vertical;
+            hexpand: true;
+            vexpand: true;
+
+            Gtk.Box boxInfo {
+                margin-bottom: 10;
+
+                Gtk.Label dateLabel {
+                    css-classes: [
+                        'title-4',
+                    ];
+                }
+
+                Gtk.Label urlLabel {
+                    xalign: 1;
+                    valign: center;
+                    hexpand: true;
+                }
+            }
+
+            Gtk.Label contentsLabel {
+                wrap: true;
+                use-markup: true;
+                hexpand: true;
+                vexpand: true;
+            }
+        }
+    }
+}

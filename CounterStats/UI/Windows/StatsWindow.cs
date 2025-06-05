@@ -1,4 +1,5 @@
-namespace ui;
+namespace CounterStats.UI.Windows;
+
 using Newtonsoft.Json.Linq;
 
 public class StatsWindow : Gtk.Box
@@ -6,19 +7,19 @@ public class StatsWindow : Gtk.Box
 
     [Gtk.Connect] private readonly Gtk.Box statsWindowBox;
     [Gtk.Connect] private readonly Adw.Banner banner;
-    private MainWindow mainWindow;
+    private MainApp mainApp;
     private ConfigurationManager configuration;
     private StatsWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public StatsWindow(MainWindow mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("StatsWindow.ui"), "statsWindow")
+    public StatsWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("StatsWindow.ui"), "statsWindow")
     {
         this.configuration = configuration;
-        this.mainWindow = mainWindow;
+        this.mainApp = mainApp;
         OnRealize += (sender, e) => Fetch();
-        OnMap += (_, _) => mainWindow.SetTitle("Player Statstics");
-        mainWindow.SetTitle("Player Statstics");
+        OnMap += (_, _) => mainApp.SetTitle("Player Statstics");
+        mainApp.SetTitle("Player Statstics");
     }
     private void CleanChildren()
     {
@@ -62,17 +63,13 @@ public class StatsWindow : Gtk.Box
             //capitalize first letter and change to spaces
             name = (name[0].ToString().ToUpper() + name.Substring(1, name.Length - 1)).Replace("_", " ");
             preferencesPage.Add(preferencesGroup(name, token.SelectToken("$.value").ToString()));
-
         }
-
     }
     private void SetBanner(string text)
     {
         Console.WriteLine($"Banner: {text}");
         banner.SetTitle(text);
         banner.SetRevealed(true);
-
-
     }
     private Adw.PreferencesGroup preferencesGroup(string title, string subtitle)
     {
@@ -100,22 +97,16 @@ public class StatsWindow : Gtk.Box
                         string data = await content.ReadAsStringAsync();
                         if (data != null)
                         {
-
                             SetData(data);
-
                         }
                         else
                         {
                             Console.WriteLine("Data is null!");
-                            //ALERT?
-
-
-                            //
+                            //ALERT?                            
                         }
                     }
                 }
             }
-
         }
         catch (Exception exception)
         {
