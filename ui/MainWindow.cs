@@ -39,8 +39,9 @@ public class MainWindow : Adw.ApplicationWindow
         statsWindow = new StatsWindow(this, configurationManager);
         profileWindow = new ProfileWindow(this, configurationManager);
         updatesWindow = new UpdatesWindow(this, configurationManager);
+        inventoryWindow = new InventoryWindow(this, configurationManager);
         leaderboardWindow = new LeaderboardWindow(this);
-        inventoryWindow = new InventoryWindow(this);
+
         //add windows to stack
         stack.AddChild(profileWindow);
         stack.AddChild(updatesWindow);

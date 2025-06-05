@@ -59,6 +59,15 @@ Adw.PreferencesDialog preferencesDialog {
         active: true;
       }
     }
+    Adw.PreferencesGroup {
+      title: _("Inventory");
+
+      Adw.SpinRow inventory_number_spin_row {
+        title: _("Maximum items to display?");
+        focusable: true;
+        numeric: true;
+      }
+    }
   }
 
   Adw.PreferencesPage storages_page {

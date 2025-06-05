@@ -10,6 +10,8 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.EntryRow steam_profile_entry_row;
     [Gtk.Connect] private readonly Adw.SpinRow updates_number_spin_row;
     [Gtk.Connect] private readonly Adw.ComboRow window_combo_row;
+    [Gtk.Connect] private readonly Adw.SpinRow inventory_number_spin_row;
+    [Gtk.Connect] private readonly Adw.ActionRow api_action_row;
     private MainWindow mainWindow;
     private ConfigurationManager configuration;
 
@@ -24,6 +26,9 @@ public class PreferencesDialog : Adw.PreferencesDialog
         //api entry
         api_entry_row.SetText(configuration.ApiKey);
         api_entry_row.OnNotify += (_, _) => { configuration.ApiKey = api_entry_row.GetText(); };
+        //add url
+        api_action_row.SetUseMarkup(true);
+        api_action_row.SetSubtitle("You can obtain your steam web api key at: <a href='https://steamcommunity.com/dev/apikey'>steamcommunity.com/dev/apikey</a>");
         //steam profile id entry
         steam_profile_entry_row.SetText(configuration.SteamProfile);
         steam_profile_entry_row.OnNotify += (_, _) => { configuration.SteamProfile = steam_profile_entry_row.GetText(); };
@@ -43,6 +48,10 @@ public class PreferencesDialog : Adw.PreferencesDialog
         //default window combo row
         window_combo_row.SetSelected((uint)configuration.DefaultWindow);
         window_combo_row.OnNotify += (_, _) => { configuration.DefaultWindow = (int)window_combo_row.GetSelected(); };
+        //inventory number of items
+        inventory_number_spin_row.SetAdjustment(Gtk.Adjustment.New(1000, 50, 5000, 50, 100, 0));
+        inventory_number_spin_row.SetValue(configuration.ItemsNumber);
+        inventory_number_spin_row.OnNotify += (_, _) => { configuration.ItemsNumber = (int)inventory_number_spin_row.GetValue(); };
     }
 
 }

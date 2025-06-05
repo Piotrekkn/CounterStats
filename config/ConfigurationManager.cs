@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Pango;
 using ui;
 
 public class ConfigurationManager
@@ -12,6 +13,7 @@ public class ConfigurationManager
         public int UpdatesNumber { get; set; }
         public bool ClearCacheOnQuit { get; set; }
         public int DefaultWindow { get; set; }
+        public int ItemsNumber { get; set; }
     }
     public string ApiKey
     {
@@ -73,6 +75,16 @@ public class ConfigurationManager
         }
     }
     private int defaultWindow;
+    public int ItemsNumber
+    {
+        get { return itemsNumber; }
+        set
+        {
+            if (itemsNumber != value)
+            { itemsNumber = value; Save(); }
+        }
+    }
+    private int itemsNumber;
     private MainWindow mainWindow;
     private string cacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
     private string configDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
@@ -92,7 +104,8 @@ public class ConfigurationManager
             UpdatesNumber = this.UpdatesNumber,
             ClearCacheOnQuit = this.ClearCacheOnQuit,
             SteamProfile = this.SteamProfile,
-            DefaultWindow = this.DefaultWindow
+            DefaultWindow = this.DefaultWindow,
+            ItemsNumber = this.ItemsNumber
         };
         string jsonString = JsonSerializer.Serialize(data);
         File.WriteAllText(configDir + configFile, jsonString);
@@ -115,6 +128,7 @@ public class ConfigurationManager
             ClearCacheOnQuit = data.ClearCacheOnQuit;
             SteamProfile = data.SteamProfile;
             DefaultWindow = data.DefaultWindow;
+            ItemsNumber = data.ItemsNumber;
         }
         else
         {
@@ -130,6 +144,7 @@ public class ConfigurationManager
         UpdatesNumber = 20;
         ClearCacheOnQuit = false;
         DefaultWindow = 0;
+        ItemsNumber = 300;
     }
     public void ClearCache()
     {

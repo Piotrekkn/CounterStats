@@ -6,4 +6,27 @@ Gtk.Box inventory_window {
   hexpand: true;
   orientation: vertical;
 
+
+
+    Gtk.Label labelName {
+      width-request: 600;
+      xalign: 0;
+      hexpand: true;
+      margin-start: 10;
+      margin-bottom: 10;
+      label: _("Inventory");
+
+      styles [
+        'large-title',
+      ]
+    }
+
+    ScrolledWindow {
+      Gtk.Box inventory_box {
+        vexpand: true;
+        hexpand: true;
+        orientation: vertical;
+      }
+    }
+  
 }
