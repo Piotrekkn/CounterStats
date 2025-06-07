@@ -14,6 +14,8 @@ public class ConfigurationManager
         public bool ClearCacheOnQuit { get; set; }
         public int DefaultWindow { get; set; }
         public int ItemsNumber { get; set; }
+        public bool AutoFetchPrices { get; set; }
+        public int Currency { get; set; }
     }
     public string ApiKey
     {
@@ -85,6 +87,27 @@ public class ConfigurationManager
         }
     }
     private int itemsNumber;
+
+    public bool AutoFetchPrices
+    {
+        get { return autoFetchPrices; }
+        set
+        {
+            if (autoFetchPrices != value)
+            { autoFetchPrices = value; Save(); }
+        }
+    }
+    private bool autoFetchPrices;
+       public int Currency
+    {
+        get { return currency; }
+        set
+        {
+            if (currency != value)
+            { currency = value; Save(); }
+        }
+    }
+    private int currency;
     private MainApp mainApp;
     private string cacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
     private string configDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
@@ -105,7 +128,9 @@ public class ConfigurationManager
             ClearCacheOnQuit = this.ClearCacheOnQuit,
             SteamProfile = this.SteamProfile,
             DefaultWindow = this.DefaultWindow,
-            ItemsNumber = this.ItemsNumber
+            ItemsNumber = this.ItemsNumber,
+            AutoFetchPrices = this.AutoFetchPrices,
+            Currency = this.Currency
         };
         string jsonString = JsonSerializer.Serialize(data);
         File.WriteAllText(configDir + configFile, jsonString);
@@ -129,6 +154,8 @@ public class ConfigurationManager
             SteamProfile = data.SteamProfile;
             DefaultWindow = data.DefaultWindow;
             ItemsNumber = data.ItemsNumber;
+            AutoFetchPrices = data.AutoFetchPrices;
+            Currency = data.Currency;
         }
         else
         {
@@ -145,6 +172,8 @@ public class ConfigurationManager
         ClearCacheOnQuit = false;
         DefaultWindow = 0;
         ItemsNumber = 300;
+        AutoFetchPrices = false;
+        Currency = 0;
     }
     public void ClearCache()
     {

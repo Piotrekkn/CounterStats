@@ -47,7 +47,7 @@ public class UpdatesWindow : Gtk.Box
             long dateLong = (long)Convert.ToDouble(date);
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
             //append
-            carousel.Append(new UpdatePost(contents, dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"), title, feedname, url,configuration.UseMarkup));
+            carousel.Append(new UpdatePost(contents, dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"), title, feedname, url, configuration.UseMarkup));
         }
     }
     private void MoveToNextPage()
@@ -64,7 +64,7 @@ public class UpdatesWindow : Gtk.Box
             carousel.ScrollTo(carousel.GetNthPage(currentPos - 1), true);
         }
     }
-  
+
     private void CleanChildren()
     {
         Gtk.Widget toRemove = carousel.GetLastChild();

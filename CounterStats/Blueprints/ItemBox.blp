@@ -4,25 +4,41 @@ using Adw 1;
 Gtk.Box itemBox {
     css-classes: [
         'card',
+        'imageItemBox',
     ];
 
-    width-request: 200;
-    height-request: 320;
+    vexpand: false;
+    hexpand: false;
     orientation: vertical;
 
     Gtk.Box headerBox {
         hexpand: true;
         orientation: horizontal;
-        margin-bottom: 5;
+        margin-bottom: 2;
         margin-end: 8;
         margin-start: 8;
         margin-top: 8;
 
-        Gtk.Label labelPrice {}
+        Gtk.Button buttonPrice {
+            icon-name: "insert-object-symbolic";
+            tooltip-text: _("Get price from the Steam Market");
+        }
+
+        Gtk.Label labelPrice {
+            height-request: 30;
+            margin-start: 6;
+            valign: center;
+            margin-top: 4;
+
+            css-classes: [
+                'title-4',
+            ];
+        }
 
         Gtk.Label labelInspect {
             halign: end;
             hexpand: true;
+            margin-end: 8;
         }
     }
 

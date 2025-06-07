@@ -49,14 +49,9 @@ public class LeaderboardWindow : Gtk.Box
     }
     private void SetLoadingScreen()
     {
-        Gtk.Spinner spinner = new Gtk.Spinner();
+        Adw.Spinner spinner = new Adw.Spinner();
         spinner.SetHexpand(true);
         spinner.SetVexpand(true);
-        spinner.SetHalign(Gtk.Align.Center);
-        spinner.SetValign(Gtk.Align.Center);
-        spinner.SetSpinning(true);
-        spinner.WidthRequest = 40;
-        spinner.HeightRequest = 40;
         leaderboardBox.Append(spinner);
     }
     private void Fetch(int regionId = 0)
@@ -104,7 +99,6 @@ public class LeaderboardWindow : Gtk.Box
                 labelScore.SetXalign(0);
                 boxRight.Append(labelScore);
                 leaderboardBox.Append(box);
-
             }
         }
         else

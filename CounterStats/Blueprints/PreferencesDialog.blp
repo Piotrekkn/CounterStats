@@ -13,34 +13,16 @@ Adw.PreferencesDialog preferencesDialog {
 
       Adw.ComboRow window_combo_row {
         title: _("Starting window");
-        subtitle: _("You can obtain your steam web api k!");
-
+        // subtitle: _("");
         model: StringList {
           strings [
             _("Your Profile"),
             _("Game Updates"),
             _("Inventory"),
             _("Leaderboards"),
-            _("Player Statistics")            
+            _("Player Statistics"),
           ]
         };
-      }
-    }
-
-    Adw.PreferencesGroup {
-      title: _("API");
-
-      Adw.ActionRow api_action_row {
-        title: _("API Key");
-        subtitle: _("You can obtain your steam web api key at: https://steamcommunity.com/dev/apikey");
-      }
-
-      Adw.PasswordEntryRow api_entry_row {
-        title: _("API Key");
-      }
-
-      Adw.EntryRow steam_profile_entry_row {
-        title: _("Steam profile");
       }
     }
 
@@ -59,6 +41,7 @@ Adw.PreferencesDialog preferencesDialog {
         active: true;
       }
     }
+
     Adw.PreferencesGroup {
       title: _("Inventory");
 
@@ -66,6 +49,40 @@ Adw.PreferencesDialog preferencesDialog {
         title: _("Maximum items to display?");
         focusable: true;
         numeric: true;
+      }
+
+      Adw.SwitchRow inventory_auto_price_switch_row {
+        title: _("Download prices automatically");
+        subtitle: _("Not recommended (Too many request will result in error.)");
+        focusable: true;
+        active: false;
+      }
+
+      Adw.ComboRow currency_combo_row {
+        title: _("Currency");
+        subtitle: _("What currency to display prices in");
+      }
+    }
+  }
+
+  Adw.PreferencesPage api_page {
+    icon-name: 'weather-overcast-symbolic';
+    title: _("API");
+
+    Adw.PreferencesGroup {
+      title: _("API");
+
+      Adw.ActionRow api_action_row {
+        title: _("API Key");
+        subtitle: _("You can obtain your steam web api key at: https://steamcommunity.com/dev/apikey");
+      }
+
+      Adw.PasswordEntryRow api_entry_row {
+        title: _("API Key");
+      }
+
+      Adw.EntryRow steam_profile_entry_row {
+        title: _("Steam profile");
       }
     }
   }
