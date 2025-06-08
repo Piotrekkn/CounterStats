@@ -5,24 +5,22 @@ using Newtonsoft.Json.Linq;
 
 public class UpdatesWindow : Gtk.Box
 {
-    [Gtk.Connect] private readonly Adw.Carousel carousel;
-    [Gtk.Connect] private readonly Gtk.Button button_left;
-    [Gtk.Connect] private readonly Gtk.Button button_right;
+    [Gtk.Connect] private readonly Adw.Carousel _carousel;
+    [Gtk.Connect] private readonly Gtk.Button _buttonLeft;
+    [Gtk.Connect] private readonly Gtk.Button _buttonRight;
     private uint currentPos = 0;
-    private ConfigurationManager configuration;
-    private MainApp mainApp;
+    private ConfigurationManager _configuration;
     private UpdatesWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public UpdatesWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("UpdatesWindow.ui"), "updates_window")
+    public UpdatesWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("UpdatesWindow.ui"), "_root")
     {
-        this.mainApp = mainApp;
-        this.configuration = configuration;
-        button_right.OnClicked += (_, _) => MoveToNextPage();
-        button_left.OnClicked += (_, _) => MoveToPrevPage();
+        _configuration = configuration;
+        _buttonRight.OnClicked += (_, _) => MoveToNextPage();
+        _buttonLeft.OnClicked += (_, _) => MoveToPrevPage();
         OnRealize += (sender, e) => Fetch();
-        carousel.OnPageChanged += (_, e) => { currentPos = e.Index; };
+        _carousel.OnPageChanged += (_, e) => { currentPos = e.Index; };
         OnMap += (_, _) => mainApp.SetTitle("Game Updates");
         mainApp.SetTitle("Game Updates");
     }
@@ -47,32 +45,32 @@ public class UpdatesWindow : Gtk.Box
             long dateLong = (long)Convert.ToDouble(date);
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
             //append
-            carousel.Append(new UpdatePost(contents, dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"), title, feedname, url, configuration.UseMarkup));
+            _carousel.Append(new UpdatePost(contents, dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"), title, feedname, url, _configuration.UseMarkup));
         }
     }
     private void MoveToNextPage()
     {
-        if (currentPos < carousel.GetNPages() - 1)
+        if (currentPos < _carousel.GetNPages() - 1)
         {
-            carousel.ScrollTo(carousel.GetNthPage(currentPos + 1), true);
+            _carousel.ScrollTo(_carousel.GetNthPage(currentPos + 1), true);
         }
     }
     private void MoveToPrevPage()
     {
         if (currentPos > 0)
         {
-            carousel.ScrollTo(carousel.GetNthPage(currentPos - 1), true);
+            _carousel.ScrollTo(_carousel.GetNthPage(currentPos - 1), true);
         }
     }
 
     private void CleanChildren()
     {
-        Gtk.Widget toRemove = carousel.GetLastChild();
+        Gtk.Widget toRemove = _carousel.GetLastChild();
         //clear window
         while (toRemove != null)
         {
-            carousel.Remove(toRemove);
-            toRemove = carousel.GetLastChild();
+            _carousel.Remove(toRemove);
+            toRemove = _carousel.GetLastChild();
         }
 
     }
@@ -83,7 +81,7 @@ public class UpdatesWindow : Gtk.Box
 
     private async void FetchData()
     {
-        string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=" + configuration.UpdatesNumber;
+        string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=" + _configuration.UpdatesNumber;
         try
         {
             using (HttpClient client = new HttpClient())

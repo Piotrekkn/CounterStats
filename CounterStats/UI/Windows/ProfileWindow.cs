@@ -1,49 +1,52 @@
 namespace CounterStats.UI.Windows;
+
 using Newtonsoft.Json.Linq;
 
 public class ProfileWindow : Gtk.Box
 {
-    [Gtk.Connect] private readonly Gtk.Image profileImage;
-    [Gtk.Connect] private readonly Gtk.Box profileWindow;
-    [Gtk.Connect] private readonly Gtk.Label labelRealName;
-    [Gtk.Connect] private readonly Gtk.Label labelLocation;
-    [Gtk.Connect] private readonly Gtk.Label labelName;
-    [Gtk.Connect] private readonly Gtk.Label timeCreated;
-    [Gtk.Connect] private readonly Gtk.Label ratio_label;
-    [Gtk.Connect] private readonly Gtk.Label ratio_label_value;
-    [Gtk.Connect] private readonly Gtk.Label hs_label;
-    [Gtk.Connect] private readonly Gtk.Label hs_label_value;
-    [Gtk.Connect] private readonly Gtk.Label time_label;
-    [Gtk.Connect] private readonly Gtk.Label time_label_value;
-    [Gtk.Connect] private readonly Adw.Banner banner;
+    [Gtk.Connect] private readonly Gtk.Image _profileImage;
+    [Gtk.Connect] private readonly Gtk.Label _labelRealName;
+    [Gtk.Connect] private readonly Gtk.Label _labelLocation;
+    [Gtk.Connect] private readonly Gtk.Label _labelName;
+    [Gtk.Connect] private readonly Gtk.Label _timeCreated;
+    [Gtk.Connect] private readonly Gtk.Label _ratioLabel;
+    [Gtk.Connect] private readonly Gtk.Label _ratioLabelValue;
+    [Gtk.Connect] private readonly Gtk.Label _hsLabel;
+    [Gtk.Connect] private readonly Gtk.Label _hsLabelValue;
+    [Gtk.Connect] private readonly Gtk.Label _timeLabel;
+    [Gtk.Connect] private readonly Gtk.Label _timeLabelValue;
+    [Gtk.Connect] private readonly Adw.Banner _banner;
     private string title = "";
     private string subtitle = "";
-    private ConfigurationManager configuration;
-    private MainApp mainWindow;
+    private ConfigurationManager _configuration;
+    private MainApp _mainWindow;
+
     private ProfileWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("ProfileWindow.ui"), "profileWindow")
+
+    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("ProfileWindow.ui"), "_root")
     {
-        this.mainWindow = mainWindow;
-        this.configuration = configuration;
+        _mainWindow = mainWindow;
+        _configuration = configuration;
         OnRealize += (sender, e) => Fetch();
         OnMap += (_, _) => mainWindow.SetTitle(title, subtitle);
         SetTitle("Your Profile");
 
     }
+
     private void SetTitle(string title, string subtitle = "")
     {
         this.title = title;
         this.subtitle = subtitle;
-        mainWindow.SetTitle(title, subtitle);
+        _mainWindow.SetTitle(title, subtitle);
     }
 
     private async void SetBackground()
     {
 
-        string baseURL = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + configuration.ApiKey + "&steamid=" + configuration.SteamProfile;
+        string baseURL = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
         try
         {
             using (HttpClient client = new HttpClient())
@@ -73,7 +76,7 @@ public class ProfileWindow : Gtk.Box
                             string cssData = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
                             Gtk.CssProvider cssProvider = new Gtk.CssProvider();
                             cssProvider.LoadFromString(cssData);
-                            profileWindow.AddCssClass("profileWindowBox");
+                            AddCssClass("profileWindowBox");
                             Gdk.Display display = Gdk.Display.GetDefault();
                             Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
                         }
@@ -90,11 +93,12 @@ public class ProfileWindow : Gtk.Box
             Console.WriteLine(exception);
         }
     }
+
     private void Fetch()
     {
-        banner.SetRevealed(false);
+        _banner.SetRevealed(false);
 
-        if (String.IsNullOrEmpty(configuration.ApiKey))
+        if (String.IsNullOrEmpty(_configuration.ApiKey))
         {
             SetBanner("API is empty, make sure to set it in the prefrences");
             return;
@@ -105,8 +109,8 @@ public class ProfileWindow : Gtk.Box
     private void SetBanner(string text)
     {
         Console.WriteLine($"Banner: {text}");
-        banner.SetTitle(text);
-        banner.SetRevealed(true);
+        _banner.SetTitle(text);
+        _banner.SetRevealed(true);
     }
 
     private async void SetData(string data)
@@ -142,12 +146,12 @@ public class ProfileWindow : Gtk.Box
         //check for profile id
         JToken player = obj.SelectToken("$.response").SelectToken("$.players")[0];
         Console.WriteLine(player.SelectToken("$.avatar").ToString());
-        labelName.SetText(player.SelectToken("$.personaname").ToString());
+        _labelName.SetText(player.SelectToken("$.personaname").ToString());
         SetTitle("Your Profile", player.SelectToken("$.personaname").ToString());
         if (player.SelectToken("$.realname") != null)
-            labelRealName.SetText(player.SelectToken("$.realname").ToString());
+            _labelRealName.SetText(player.SelectToken("$.realname").ToString());
         if (player.SelectToken("$.loccityid") != null)
-            labelLocation.SetText(player.SelectToken("$.loccityid").ToString() + ", " + player.SelectToken("$.locstatecode").ToString() + ", " + player.SelectToken("$.loccountrycode").ToString());
+            _labelLocation.SetText(player.SelectToken("$.loccityid").ToString() + ", " + player.SelectToken("$.locstatecode").ToString() + ", " + player.SelectToken("$.loccountrycode").ToString());
         if (player.SelectToken("$.avatarfull") != null)
         {
             string avatar_url = player.SelectToken("$.avatarfull").ToString();
@@ -157,7 +161,7 @@ public class ProfileWindow : Gtk.Box
         {
             long dateLong = (long)Convert.ToDouble(player.SelectToken("$.timecreated").ToString());
             System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
-            timeCreated.SetText("Account created:\n" + dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"));
+            _timeCreated.SetText("Account created:\n" + dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"));
         }
     }
 
@@ -170,11 +174,12 @@ public class ProfileWindow : Gtk.Box
             byte[] imageBytes = await client.GetByteArrayAsync(url);
             await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
         }
-        profileImage.SetFromFile(dir);
+        _profileImage.SetFromFile(dir);
     }
+
     private async void FetchData()
     {
-        string baseURL = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + configuration.ApiKey + "&steamids=" + configuration.SteamProfile;
+        string baseURL = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + _configuration.ApiKey + "&steamids=" + _configuration.SteamProfile;
         try
         {
             using (HttpClient client = new HttpClient())
@@ -202,9 +207,10 @@ public class ProfileWindow : Gtk.Box
             Console.WriteLine(exception);
         }
     }
+
     private async void FetchData2()
     {
-        string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + configuration.ApiKey + "&steamid=" + configuration.SteamProfile; ;
+        string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile; ;
         try
         {
             using (HttpClient client = new HttpClient())
@@ -231,12 +237,13 @@ public class ProfileWindow : Gtk.Box
             Console.WriteLine(exception);
         }
     }
+    
     private async void SetData2(string data)
     {
         JObject obj = JObject.Parse(data);
-        time_label.SetLabel("Time spent in game");
-        hs_label.SetLabel("HS percentage");
-        ratio_label.SetLabel("KD Ratio");
+        _timeLabel.SetLabel("Time spent in game");
+        _hsLabel.SetLabel("HS percentage");
+        _ratioLabel.SetLabel("KD Ratio");
         if (obj.SelectToken("$.playerstats") != null)
         {
             JToken stats = obj.SelectToken("$.playerstats").SelectToken("$.stats");
@@ -264,9 +271,9 @@ public class ProfileWindow : Gtk.Box
                     total_kills_headshot = Convert.ToInt32(token.SelectToken("$.value"));
                 }
             }
-            time_label_value.SetLabel(((int)total_time_played / 60 / 60).ToString() + "h");
-            hs_label_value.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.###") + "%");
-            ratio_label_value.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.###"));
+            _timeLabelValue.SetLabel(((int)total_time_played / 60 / 60).ToString() + "h");
+            _hsLabelValue.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.###") + "%");
+            _ratioLabelValue.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.###"));
         }
     }
 }

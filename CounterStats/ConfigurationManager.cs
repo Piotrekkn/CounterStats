@@ -108,13 +108,13 @@ public class ConfigurationManager
         }
     }
     private int currency;
-    private MainApp mainApp;
+    private MainApp _mainApp;
     private string cacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
     private string configDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
     private string configFile = "data.json";
     public ConfigurationManager(MainApp mainApp)
     {
-        this.mainApp = mainApp;
+        _mainApp = mainApp;
         Load();
     }
 
@@ -185,7 +185,7 @@ public class ConfigurationManager
         alertDialog.SetResponseAppearance("cancel", Adw.ResponseAppearance.Default);
         alertDialog.SetHeading("Do you want to delete cache data?");
         alertDialog.SetBody("This action will delete all the temporary files and cache data!");
-        alertDialog.Present(mainApp);
+        alertDialog.Present(_mainApp);
         //handle the response
         alertDialog.OnResponse += (_, response) =>
         {
@@ -206,7 +206,7 @@ public class ConfigurationManager
         alertDialog.SetResponseAppearance("cancel", Adw.ResponseAppearance.Default);
         alertDialog.SetHeading("Do you want to delete all of the configuration data?");
         alertDialog.SetBody("This action will delete all the configuration data (including apis and logins), temporary files and cache data!. Application will be closed");
-        alertDialog.Present(mainApp);
+        alertDialog.Present(_mainApp);
         //handle the response
         alertDialog.OnResponse += (_, res) =>
         {
@@ -216,7 +216,7 @@ public class ConfigurationManager
                 DeleteDirectory(cacheDir);
                 Console.WriteLine("cleaning config");
                 DeleteDirectory(configDir);
-                mainApp.Application.Quit();
+                _mainApp.Application.Quit();
             }
 
         };

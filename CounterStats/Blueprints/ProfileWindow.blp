@@ -1,12 +1,12 @@
 using Gtk 4.0;
 using Adw 1;
 
-Gtk.Box profileWindow {
+Gtk.Box _root {
   vexpand: true;
   hexpand: true;
   orientation: vertical;
 
-  Adw.Banner banner {
+  Adw.Banner _banner {
     revealed: false;
   }
 
@@ -20,7 +20,7 @@ Gtk.Box profileWindow {
         "osd",
       ]
 
-      Gtk.Box profileWindowBox {
+      Gtk.Box _profileWindowBox {
         margin-top: 20;
         orientation: horizontal;
         vexpand: true;
@@ -28,13 +28,13 @@ Gtk.Box profileWindow {
         width-request: 500;
         halign: center;
 
-        Gtk.Box imageBox {
+        Gtk.Box _imageBox {
           width-request: 300;
           height-request: 300;
           halign: start;
           valign: start;
 
-          Gtk.Image profileImage {
+          Gtk.Image _profileImage {
             width-request: 300;
             height-request: 300;
             margin-end: 20;
@@ -47,7 +47,7 @@ Gtk.Box profileWindow {
           orientation: vertical;
           width-request: 300;
 
-          Gtk.Label labelName {
+          Gtk.Label _labelName {
             xalign: 0;
             label: _("");
 
@@ -56,7 +56,7 @@ Gtk.Box profileWindow {
             ]
           }
 
-          Gtk.Label labelRealName {
+          Gtk.Label _labelRealName {
             xalign: 0;
             label: _("");
 
@@ -65,7 +65,7 @@ Gtk.Box profileWindow {
             ]
           }
 
-          Gtk.Label labelLocation {
+          Gtk.Label _labelLocation {
             xalign: 0;
             label: _("");
 
@@ -74,7 +74,7 @@ Gtk.Box profileWindow {
             ]
           }
 
-          Gtk.Label timeCreated {
+          Gtk.Label _timeCreated {
             xalign: 0;
             label: _("");
 
@@ -102,7 +102,7 @@ Gtk.Box profileWindow {
             vexpand: true;
             hexpand: true;
 
-            Gtk.Label ratio_label {
+            Gtk.Label _ratioLabel {
               label: _("");
               margin-bottom: 10;
 
@@ -111,7 +111,7 @@ Gtk.Box profileWindow {
               ]
             }
 
-            Gtk.Label ratio_label_value {
+            Gtk.Label _ratioLabelValue {
               label: _("");
 
               styles [
@@ -127,7 +127,7 @@ Gtk.Box profileWindow {
             vexpand: true;
             hexpand: true;
 
-            Gtk.Label hs_label {
+            Gtk.Label _hsLabel {
               label: _("");
               margin-bottom: 10;
 
@@ -136,7 +136,7 @@ Gtk.Box profileWindow {
               ]
             }
 
-            Gtk.Label hs_label_value {
+            Gtk.Label _hsLabelValue {
               label: _("");
 
               styles [
@@ -152,7 +152,7 @@ Gtk.Box profileWindow {
             vexpand: true;
             hexpand: true;
 
-            Gtk.Label time_label {
+            Gtk.Label _timeLabel {
               label: _("");
               margin-bottom: 10;
 
@@ -161,7 +161,7 @@ Gtk.Box profileWindow {
               ]
             }
 
-            Gtk.Label time_label_value {
+            Gtk.Label _timeLabelValue {
               label: _("");
 
               styles [

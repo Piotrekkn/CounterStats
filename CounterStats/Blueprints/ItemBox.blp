@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Gtk.Box itemBox {
+Gtk.Box _root {
     css-classes: [
         'card',
         'imageItemBox',
@@ -11,7 +11,7 @@ Gtk.Box itemBox {
     hexpand: false;
     orientation: vertical;
 
-    Gtk.Box headerBox {
+    Gtk.Box _headerBox {
         hexpand: true;
         orientation: horizontal;
         margin-bottom: 2;
@@ -19,12 +19,12 @@ Gtk.Box itemBox {
         margin-start: 8;
         margin-top: 8;
 
-        Gtk.Button buttonPrice {
+        Gtk.Button _buttonPrice {
             icon-name: "insert-object-symbolic";
             tooltip-text: _("Get price from the Steam Market");
         }
 
-        Gtk.Label labelPrice {
+        Gtk.Label _labelPrice {
             height-request: 30;
             margin-start: 6;
             valign: center;
@@ -35,14 +35,14 @@ Gtk.Box itemBox {
             ];
         }
 
-        Gtk.Label labelInspect {
+        Gtk.Label _labelInspect {
             halign: end;
             hexpand: true;
             margin-end: 8;
         }
     }
 
-    Gtk.Image image {
+    Gtk.Image _image {
         hexpand: true;
         vexpand: true;
         icon-size: large;
@@ -51,15 +51,15 @@ Gtk.Box itemBox {
         margin-top: 6;
     }
 
-    Gtk.Label labelTag {
+    Gtk.Label _labelTag {
         margin-bottom: 6;
     }
 
-    Gtk.Label labelName {
+    Gtk.Label _labelName {
         margin-bottom: 6;
     }
 
-    Gtk.Label labelType {
+    Gtk.Label _labelType {
         margin-bottom: 8;
     }
 }

@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.PreferencesDialog preferencesDialog {
+Adw.PreferencesDialog _root {
   title: _("Counter Stats Global Preferences");
 
   Adw.PreferencesPage {
@@ -11,7 +11,7 @@ Adw.PreferencesDialog preferencesDialog {
     Adw.PreferencesGroup {
       title: _("General");
 
-      Adw.ComboRow window_combo_row {
+      Adw.ComboRow _windowComboRow {
         title: _("Starting window");
         // subtitle: _("");
         model: StringList {
@@ -29,13 +29,13 @@ Adw.PreferencesDialog preferencesDialog {
     Adw.PreferencesGroup {
       title: _("Game Updates");
 
-      Adw.SpinRow updates_number_spin_row {
+      Adw.SpinRow _updatesNumberSpinRow {
         title: _("How much recent updates to fetch?");
         focusable: true;
         numeric: true;
       }
 
-      Adw.SwitchRow updates_markup_switch_row {
+      Adw.SwitchRow _updatesMarkupSwitchRow {
         title: _("Use markup in updates section");
         focusable: true;
         active: true;
@@ -45,61 +45,61 @@ Adw.PreferencesDialog preferencesDialog {
     Adw.PreferencesGroup {
       title: _("Inventory");
 
-      Adw.SpinRow inventory_number_spin_row {
+      Adw.SpinRow _inventoryNumberSpinRow {
         title: _("Maximum items to display?");
         focusable: true;
         numeric: true;
       }
 
-      Adw.SwitchRow inventory_auto_price_switch_row {
+      Adw.SwitchRow _inventoryAutoPriceSwitchRow {
         title: _("Download prices automatically");
         subtitle: _("Not recommended (Too many request will result in error.)");
         focusable: true;
         active: false;
       }
 
-      Adw.ComboRow currency_combo_row {
+      Adw.ComboRow _currencyComboRow {
         title: _("Currency");
         subtitle: _("What currency to display prices in");
       }
     }
   }
 
-  Adw.PreferencesPage api_page {
+  Adw.PreferencesPage _apiPage {
     icon-name: 'weather-overcast-symbolic';
     title: _("API");
 
     Adw.PreferencesGroup {
       title: _("API");
 
-      Adw.ActionRow api_action_row {
+      Adw.ActionRow _apiActionRow {
         title: _("API Key");
         subtitle: _("You can obtain your steam web api key at: https://steamcommunity.com/dev/apikey");
       }
 
-      Adw.PasswordEntryRow api_entry_row {
+      Adw.PasswordEntryRow _apiEntryRow {
         title: _("API Key");
       }
 
-      Adw.EntryRow steam_profile_entry_row {
+      Adw.EntryRow _steamProfileEntryRow {
         title: _("Steam profile");
       }
     }
   }
 
-  Adw.PreferencesPage storages_page {
+  Adw.PreferencesPage _storagesPage {
     icon-name: 'drive-harddisk-symbolic';
     title: _("Storage");
 
     Adw.PreferencesGroup {
       title: _("Clear Storage");
 
-      Adw.SwitchRow clear_cache_switch {
+      Adw.SwitchRow _clearCacheSwitch {
         title: _("Clear Cache on Exit");
         subtitle: _("Clear all the temporary files when exiting the application.");
       }
 
-      Adw.ButtonRow clear_cache_button {
+      Adw.ButtonRow _clearCacheButton {
         title: _("Clear Cache");
 
         styles [
@@ -107,7 +107,7 @@ Adw.PreferencesDialog preferencesDialog {
         ]
       }
 
-      Adw.ButtonRow clear_data_button {
+      Adw.ButtonRow _clearDataButton {
         title: _("Remove all data and cache");
 
         styles [

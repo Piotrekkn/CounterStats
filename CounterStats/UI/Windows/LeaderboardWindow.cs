@@ -4,30 +4,30 @@ using Newtonsoft.Json.Linq;
 
 public class LeaderboardWindow : Gtk.Box
 {
-    [Gtk.Connect] private readonly Gtk.Box leaderboardBox;
-    [Gtk.Connect] private readonly Gtk.DropDown dropdown;
-    [Gtk.Connect] private readonly Gtk.ToggleButton buttonSmallLeader;
+    [Gtk.Connect] private readonly Gtk.Box _leaderboardBox;
+    [Gtk.Connect] private readonly Gtk.DropDown _dropdown;
+    [Gtk.Connect] private readonly Gtk.ToggleButton _buttonSmallLeader;
     string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season2";
     private string[] regions = new string[8] { "World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa" };
     private string title = "";
     private string subtitle = "";
-    MainApp mainApp;
+    MainApp _mainApp;
     private LeaderboardWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public LeaderboardWindow(MainApp mainApp) : this(new Gtk.Builder("LeaderboardWindow.ui"), "leaderboard_window")
+    public LeaderboardWindow(MainApp mainApp) : this(new Gtk.Builder("LeaderboardWindow.ui"), "_root")
     {
-        this.mainApp = mainApp;
+        _mainApp = mainApp;
         OnRealize += (sender, e) => Fetch();
-        buttonSmallLeader.OnClicked += (sender, e) => Fetch((int)dropdown.GetSelected());
+        _buttonSmallLeader.OnClicked += (sender, e) => Fetch((int)_dropdown.GetSelected());
         OnMap += (_, _) => mainApp.SetTitle(title, subtitle);
         SetTitle("Leaderboards", regions[0]);
         //dropdown menu
-        dropdown.SetModel(Gtk.StringList.New(regions));
-        dropdown.OnNotify += (sender, e) =>
+        _dropdown.SetModel(Gtk.StringList.New(regions));
+        _dropdown.OnNotify += (sender, e) =>
         {
-            int regionId = (int)dropdown.GetSelected();
+            int regionId = (int)_dropdown.GetSelected();
             Fetch(regionId);
             SetTitle("Leaderboards", regions[regionId]);
         };
@@ -36,15 +36,15 @@ public class LeaderboardWindow : Gtk.Box
     {
         this.title = title;
         this.subtitle = subtitle;
-        mainApp.SetTitle(title, subtitle);
+        _mainApp.SetTitle(title, subtitle);
     }
     private void CleanChildren()
     {
-        Gtk.Widget toRemove = leaderboardBox.GetLastChild();
+        Gtk.Widget toRemove = _leaderboardBox.GetLastChild();
         while (toRemove != null)
         {
-            leaderboardBox.Remove(toRemove);
-            toRemove = leaderboardBox.GetLastChild();
+            _leaderboardBox.Remove(toRemove);
+            toRemove = _leaderboardBox.GetLastChild();
         }
     }
     private void SetLoadingScreen()
@@ -52,7 +52,7 @@ public class LeaderboardWindow : Gtk.Box
         Adw.Spinner spinner = new Adw.Spinner();
         spinner.SetHexpand(true);
         spinner.SetVexpand(true);
-        leaderboardBox.Append(spinner);
+        _leaderboardBox.Append(spinner);
     }
     private void Fetch(int regionId = 0)
     {
@@ -67,7 +67,7 @@ public class LeaderboardWindow : Gtk.Box
         JObject obj = JObject.Parse(data);
         JToken players = obj.SelectToken("$.result").SelectToken("$.entries");
         int i = 1;
-        if (!buttonSmallLeader.GetActive())
+        if (!_buttonSmallLeader.GetActive())
         {
             //big leaderboards
             foreach (var player in players)
@@ -98,7 +98,7 @@ public class LeaderboardWindow : Gtk.Box
                 labelScore.SetCssClasses(["title-3"]);
                 labelScore.SetXalign(0);
                 boxRight.Append(labelScore);
-                leaderboardBox.Append(box);
+                _leaderboardBox.Append(box);
             }
         }
         else
@@ -114,7 +114,7 @@ public class LeaderboardWindow : Gtk.Box
                 score = score >> 15;
                 row.SetUseMarkup(true);
                 row.Subtitle = ColorScore((int)player.SelectToken("$.score"));
-                leaderboardBox.Append(row);
+                _leaderboardBox.Append(row);
             }
         }
     }

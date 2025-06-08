@@ -8,51 +8,50 @@ using HarfBuzz;
 
 public class MainApp : Adw.ApplicationWindow
 {
-    [Gtk.Connect] private readonly Gtk.Stack stack;
-    [Gtk.Connect] private readonly Adw.WindowTitle window_title;
-    [Gtk.Connect] private readonly Gtk.Button show_sidebar_button;
-    [Gtk.Connect] private readonly Gtk.ListBox listview;
-    [Gtk.Connect] private readonly Adw.OverlaySplitView split_view;
-    [Gtk.Connect] private readonly Gtk.ListBoxRow profile_box_row;
-    private ConfigurationManager configurationManager;
-    private UpdatesWindow? updatesWindow;
-    private StatsWindow? statsWindow;
-    private ProfileWindow? profileWindow;
-    private LeaderboardWindow? leaderboardWindow;
-    private InventoryWindow? inventoryWindow;
+    [Gtk.Connect] private readonly Gtk.Stack _stack;
+    [Gtk.Connect] private readonly Adw.WindowTitle _windowTitle;
+    [Gtk.Connect] private readonly Gtk.Button _showSidebarButton;
+    [Gtk.Connect] private readonly Gtk.ListBox _listView;
+    [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;  
+    private ConfigurationManager _configurationManager;
+    private UpdatesWindow? _updatesWindow;
+    private StatsWindow? _statsWindow;
+    private ProfileWindow? _profileWindow;
+    private LeaderboardWindow? _leaderboardWindow;
+    private InventoryWindow? _inventoryWindow;
     private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public MainApp(Adw.Application application) : this(new Gtk.Builder("MainApp.ui"), "main_window")
+    public MainApp(Adw.Application application) : this(new Gtk.Builder("MainApp.ui"), "_root")
     {
-        this.Application = application;
-        configurationManager = new ConfigurationManager(this);
+        Application = application;
+        _configurationManager = new ConfigurationManager(this);
         application.ActiveWindow.WidthRequest = 900;
         application.OnShutdown += (_, _) => OnShutdownApp();
-        listview.OnRowActivated += (_, _) => { OnRowChange(); };
-        show_sidebar_button.OnClicked += (_, _) => ToogleSplitView();
+        _listView.OnRowActivated += (_, _) => { OnRowChange(); };
+        _showSidebarButton.OnClicked += (_, _) => ToogleSplitView();
         //create actions
         CreateAction("About", (_, _) => { OnAboutAction(); });
-        CreateAction("Quit", (_, _) => { this.Application.Quit(); }, ["<Ctrl>Q"]);
+        CreateAction("Quit", (_, _) => { Application.Quit(); }, ["<Ctrl>Q"]);
         CreateAction("Preferences", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>comma"]);
         CreateAction("GetNews", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>R"]);
         //windows
-        statsWindow = new StatsWindow(this, configurationManager);
-        profileWindow = new ProfileWindow(this, configurationManager);
-        updatesWindow = new UpdatesWindow(this, configurationManager);
-        inventoryWindow = new InventoryWindow(this, configurationManager);
-        leaderboardWindow = new LeaderboardWindow(this);
+        _statsWindow = new StatsWindow(this, _configurationManager);
+        _profileWindow = new ProfileWindow(this, _configurationManager);
+        _updatesWindow = new UpdatesWindow(this, _configurationManager);
+        _inventoryWindow = new InventoryWindow(this, _configurationManager);
+        _leaderboardWindow = new LeaderboardWindow(this);
 
         //add windows to stack
-        stack.AddChild(profileWindow);
-        stack.AddChild(updatesWindow);
-        stack.AddChild(inventoryWindow);
-        stack.AddChild(statsWindow);
-        stack.AddChild(leaderboardWindow);
+        _stack.AddChild(_profileWindow);
+        _stack.AddChild(_updatesWindow);
+        _stack.AddChild(_inventoryWindow);
+        _stack.AddChild(_statsWindow);
+        _stack.AddChild(_leaderboardWindow);
         //select the row in the sidebar an set the window
-        SetWindow(configurationManager.DefaultWindow + 1);
-        listview.SelectRow(GetListBoxRowByID(configurationManager.DefaultWindow));
+        SetWindow(_configurationManager.DefaultWindow + 1);
+        _listView.SelectRow(GetListBoxRowByID(_configurationManager.DefaultWindow));
     }
     private void OnAboutAction()
     {         
@@ -68,21 +67,21 @@ public class MainApp : Adw.ApplicationWindow
     }
     private void OnPreferencesAction()
     {
-        PreferencesDialog? preferencesDialog = new PreferencesDialog(this, configurationManager);
+        PreferencesDialog? preferencesDialog = new PreferencesDialog(this, _configurationManager);
         preferencesDialog.Present(this);
     }
     private void OnShutdownApp()
     {
-        if (configurationManager.ClearCacheOnQuit)
+        if (_configurationManager.ClearCacheOnQuit)
         {
-            configurationManager.ClearCache();
+            _configurationManager.ClearCache();
         }
         Console.WriteLine("BYE BYE");
     }
     public void SetTitle(string title, string subtitle = "")
     {
-        window_title.SetTitle(title);
-        window_title.SetSubtitle(subtitle);
+        _windowTitle.SetTitle(title);
+        _windowTitle.SetSubtitle(subtitle);
     }
 
     private void CreateAction(string name, SignalHandler<SimpleAction, SimpleAction.ActivateSignalArgs> callback, string[]? shortcuts = null)
@@ -90,22 +89,22 @@ public class MainApp : Adw.ApplicationWindow
         var lowerName = name.ToLowerInvariant();
         var actionItem = SimpleAction.New(lowerName, null);
         actionItem.OnActivate += callback;
-        this.Application.AddAction(actionItem);
+        Application.AddAction(actionItem);
 
         if (shortcuts is { Length: > 0 })
         {
-            this.Application.SetAccelsForAction($"app.{lowerName}", shortcuts);
+            Application.SetAccelsForAction($"app.{lowerName}", shortcuts);
         }
     }
 
     private void ToogleSplitView()
     {
-        split_view.SetCollapsed(!split_view.GetCollapsed());
+        _splitView.SetCollapsed(!_splitView.GetCollapsed());
     }
 
     private Gtk.ListBoxRow GetListBoxRowByID(int id)
     {
-        Gtk.Widget listBoxRow = listview.GetFirstChild();
+        Gtk.Widget listBoxRow = _listView.GetFirstChild();
         while (id > 0)
         {
             listBoxRow = listBoxRow.GetNextSibling();
@@ -115,16 +114,16 @@ public class MainApp : Adw.ApplicationWindow
     }
     private void OnRowChange()
     {
-        Console.WriteLine(listview.GetFocusChild().Name);
-        if (listview.GetFocusChild().Name == "profile-window")
+        Console.WriteLine(_listView.GetFocusChild().Name);
+        if (_listView.GetFocusChild().Name == "profile-window")
             SetWindow(1);
-        if (listview.GetFocusChild().Name == "updates-window")
+        if (_listView.GetFocusChild().Name == "updates-window")
             SetWindow(2);
-        if (listview.GetFocusChild().Name == "inventory-window")
+        if (_listView.GetFocusChild().Name == "inventory-window")
             SetWindow(3);
-        if (listview.GetFocusChild().Name == "leaderboard-window")
+        if (_listView.GetFocusChild().Name == "leaderboard-window")
             SetWindow(4);
-        if (listview.GetFocusChild().Name == "stats-window")
+        if (_listView.GetFocusChild().Name == "stats-window")
             SetWindow(5);
 
     }
@@ -134,28 +133,28 @@ public class MainApp : Adw.ApplicationWindow
         switch (windowId)
         {
             case 1:
-                stack.SetFocusChild(profileWindow);
-                stack.VisibleChild = profileWindow;
+                _stack.SetFocusChild(_profileWindow);
+                _stack.VisibleChild = _profileWindow;
                 break;
             case 2:
-                stack.SetFocusChild(updatesWindow);
-                stack.VisibleChild = updatesWindow;
+                _stack.SetFocusChild(_updatesWindow);
+                _stack.VisibleChild = _updatesWindow;
                 break;
             case 3:
-                stack.SetFocusChild(inventoryWindow);
-                stack.VisibleChild = inventoryWindow;
+                _stack.SetFocusChild(_inventoryWindow);
+                _stack.VisibleChild = _inventoryWindow;
                 break;
             case 4:
-                stack.SetFocusChild(leaderboardWindow);
-                stack.VisibleChild = leaderboardWindow;
+                _stack.SetFocusChild(_leaderboardWindow);
+                _stack.VisibleChild = _leaderboardWindow;
                 break;
             case 5:
-                stack.SetFocusChild(statsWindow);
-                stack.VisibleChild = statsWindow;
+                _stack.SetFocusChild(_statsWindow);
+                _stack.VisibleChild = _statsWindow;
                 break;
             case 0:
             default:
-                stack.SetFocusChild(null);
+                _stack.SetFocusChild(null);
                 break;
         }
 

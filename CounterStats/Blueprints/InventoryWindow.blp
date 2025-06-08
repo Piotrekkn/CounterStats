@@ -1,16 +1,16 @@
 using Gtk 4.0;
 using Adw 1;
 
-Gtk.Box inventory_window {
+Gtk.Box _root {
   vexpand: true;
   hexpand: true;
   orientation: vertical;
 
-  Gtk.Box header_box {
+  Gtk.Box _headerBox {
     hexpand: true;
     orientation: horizontal;
 
-    Gtk.Label labelName {
+    Gtk.Label _labelName {
       width-request: 300;
       xalign: 0;
       valign: center;
@@ -24,7 +24,7 @@ Gtk.Box inventory_window {
       ]
     }
 
-    Gtk.SearchEntry searchEntry {
+    Gtk.SearchEntry _searchEntry {
       width-request: 250;
       height-request: 30;
       margin-bottom: 10;
@@ -32,7 +32,7 @@ Gtk.Box inventory_window {
       valign: center;
     }
 
-    Gtk.Scale scale {
+    Gtk.Scale _scale {
       width-request: 150;
       orientation: horizontal;
       margin-end: 10;
@@ -41,26 +41,25 @@ Gtk.Box inventory_window {
   }
 
   ScrolledWindow {
-    Gtk.Box inventory_box {
+    Gtk.Box _inventoryBox {
       vexpand: true;
       hexpand: true;
-      orientation: vertical;   
+      orientation: vertical;
 
-      Adw.Spinner spinner{
+      Adw.Spinner _spinner {
         visible: false;
         hexpand: true;
         vexpand: true;
       }
-      Gtk.FlowBox flowBox {
-        
-      hexpand: true;
+
+      Gtk.FlowBox _flowBox {
+        hexpand: true;
         row-spacing: 10;
         column-spacing: 10;
         margin-bottom: 12;
         margin-end: 12;
         margin-start: 12;
         margin-top: 8;
-        
       }
     }
   }

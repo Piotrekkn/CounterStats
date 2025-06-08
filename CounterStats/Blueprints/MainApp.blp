@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Adw.ApplicationWindow main_window {
+Adw.ApplicationWindow _root {
   default-width: 1200;
   default-height: 850;
   title: "Counter Stats";
@@ -10,11 +10,11 @@ Adw.ApplicationWindow main_window {
     condition ("max-width:1100")
 
     setters {
-      split_view.collapsed: true;
+      _splitView.collapsed: true;
     }
   }
 
-  content: Adw.OverlaySplitView split_view {
+  content: Adw.OverlaySplitView _splitView {
     [sidebar]
     Adw.NavigationPage {
       title: _("Counter Stats");
@@ -36,7 +36,7 @@ Adw.ApplicationWindow main_window {
           MenuButton {
             tooltip-text: _("Main Menu");
             icon-name: "open-menu-symbolic";
-            menu-model: primary_menu;
+            menu-model: _primaryMenu;
             primary: true;
           }
         }
@@ -44,15 +44,15 @@ Adw.ApplicationWindow main_window {
         ScrolledWindow {
           hscrollbar-policy: never;
 
-          Gtk.ListBox listview {
+          Gtk.ListBox _listView {
             vexpand: true;
-            name: "zzz";
+            name: "";
 
             styles [
               "navigation-sidebar",
             ]
 
-            Gtk.ListBoxRow profile_box_row {
+            Gtk.ListBoxRow _profileBoxRow {
               name: "profile-window";
 
               styles [
@@ -71,7 +71,7 @@ Adw.ApplicationWindow main_window {
               }
             }
 
-            Gtk.ListBoxRow updates-box-row {
+            Gtk.ListBoxRow _updatesBoxRow {
               name: "updates-window";
 
               styles [
@@ -89,7 +89,8 @@ Adw.ApplicationWindow main_window {
                 }
               }
             }
-             Gtk.ListBoxRow inventory-box-row {
+
+            Gtk.ListBoxRow _inventoryBoxRow {
               name: "inventory-window";
 
               styles [
@@ -108,7 +109,7 @@ Adw.ApplicationWindow main_window {
               }
             }
 
-            Gtk.ListBoxRow leaderboard-box-row {
+            Gtk.ListBoxRow _leaderboardBoxRow {
               name: "leaderboard-window";
 
               styles [
@@ -131,7 +132,7 @@ Adw.ApplicationWindow main_window {
               }
             }
 
-            Gtk.ListBoxRow stats-box-row {
+            Gtk.ListBoxRow _statsBoxRow {
               name: "stats-window";
 
               styles [
@@ -155,7 +156,7 @@ Adw.ApplicationWindow main_window {
             }
 
             [bottom]
-            Gtk.ListBoxRow findplayer-box-row {
+            Gtk.ListBoxRow _findplayerBoxRow {
               name: "findplayer-window";
 
               styles [
@@ -191,12 +192,12 @@ Adw.ApplicationWindow main_window {
         [top]
         Adw.HeaderBar {
           [start]
-          Gtk.Button show_sidebar_button {
+          Gtk.Button _showSidebarButton {
             icon-name: "sidebar-show-symbolic";
           }
 
           [title]
-          Adw.WindowTitle window_title {
+          Adw.WindowTitle _windowTitle {
             title: "Counter Stats";
           }
         }
@@ -210,7 +211,7 @@ Adw.ApplicationWindow main_window {
               hexpand: true;
               vexpand: true;
 
-              Stack stack {
+              Stack _stack {
                 hexpand: true;
                 vexpand: true;
               }
@@ -222,7 +223,7 @@ Adw.ApplicationWindow main_window {
   };
 }
 
-menu primary_menu {
+menu _primaryMenu {
   section {
     item (_("Preferences"), "app.preferences")
   }

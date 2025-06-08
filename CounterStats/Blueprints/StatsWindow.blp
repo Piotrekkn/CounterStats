@@ -1,12 +1,12 @@
 using Gtk 4.0;
 using Adw 1;
 
-Gtk.Box statsWindow {
+Gtk.Box _root {
   vexpand: true;
   hexpand: true;
   orientation: vertical;
 
-  Adw.Banner banner {
+  Adw.Banner _banner {
     revealed: false;
   }
 
@@ -14,14 +14,14 @@ Gtk.Box statsWindow {
     vexpand: true;
     hexpand: true;
 
-    Gtk.Box statsWindowBox {
+    Gtk.Box _statsWindowBox {
       orientation: horizontal;
       vexpand: true;
       hexpand: true;
 
       Adw.Spinner {
         hexpand: true;
-        vexpand: true;      
+        vexpand: true;
       }
     }
   }

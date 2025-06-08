@@ -2,31 +2,31 @@ namespace CounterStats.UI.Elements;
 
 public class UpdatePost : Gtk.ScrolledWindow
 {
-    [Gtk.Connect] private readonly Gtk.Label titleLabel;
-    [Gtk.Connect] private readonly Gtk.Label subtitleLabel;
-    [Gtk.Connect] private readonly Gtk.Label contentsLabel;
-    [Gtk.Connect] private readonly Gtk.Label dateLabel;
-    [Gtk.Connect] private readonly Gtk.Label urlLabel;
+    [Gtk.Connect] private readonly Gtk.Label _titleLabel;
+    [Gtk.Connect] private readonly Gtk.Label _subtitleLabel;
+    [Gtk.Connect] private readonly Gtk.Label _contentsLabel;
+    [Gtk.Connect] private readonly Gtk.Label _dateLabel;
+    [Gtk.Connect] private readonly Gtk.Label _urlLabel;
     private UpdatePost(Gtk.Builder builder, string name) : base(new Gtk.Internal.ScrolledWindowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public UpdatePost(string contents, string date, string title, string feedname, string url, bool useMarkup) : this(new Gtk.Builder("UpdatePost.ui"), "updatePost")
+    public UpdatePost(string contents, string date, string title, string feedname, string url, bool useMarkup) : this(new Gtk.Builder("UpdatePost.ui"), "_root")
     {
-        titleLabel.SetText(title);
-        subtitleLabel.SetText(feedname);
+        _titleLabel.SetText(title);
+        _subtitleLabel.SetText(feedname);
         if (useMarkup)
         {
             contents = FormatTextForMarkup(contents);
         }
-        contentsLabel.SetText(contents);
+        _contentsLabel.SetText(contents);
         if (useMarkup)
         {
-            contentsLabel.SetMarkup(contents);
+            _contentsLabel.SetMarkup(contents);
         }
-        dateLabel.SetText(date);
-        urlLabel.SetMarkup("<a href='" + url + "'>Web link</a>");
-        urlLabel.SetTooltipText(url);
+        _dateLabel.SetText(date);
+        _urlLabel.SetMarkup("<a href='" + url + "'>Web link</a>");
+        _urlLabel.SetTooltipText(url);
 
     }
     private string FormatTextForMarkup(string textToFormat)

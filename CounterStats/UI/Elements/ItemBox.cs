@@ -6,51 +6,50 @@ using CounterStats.Enums;
 using GdkPixbuf;
 using GLib;
 using Newtonsoft.Json.Linq;
+
 public class ItemBox : Gtk.Box
 {
-    [Gtk.Connect] private readonly Gtk.Image image;
-    [Gtk.Connect] private readonly Gtk.Label labelInspect;
-    [Gtk.Connect] private readonly Gtk.Label labelName;
-    [Gtk.Connect] private readonly Gtk.Label labelTag;
-    [Gtk.Connect] private readonly Gtk.Label labelType;
-    [Gtk.Connect] private readonly Gtk.Label labelPrice;
-    [Gtk.Connect] private readonly Gtk.Button buttonPrice;
+    [Gtk.Connect] private readonly Gtk.Image _image;
+    [Gtk.Connect] private readonly Gtk.Label _labelInspect;
+    [Gtk.Connect] private readonly Gtk.Label _labelName;
+    [Gtk.Connect] private readonly Gtk.Label _labelTag;
+    [Gtk.Connect] private readonly Gtk.Label _labelType;
+    [Gtk.Connect] private readonly Gtk.Label _labelPrice;
+    [Gtk.Connect] private readonly Gtk.Button _buttonPrice;
     private string marketPriceUrl = "https://steamcommunity.com/market/priceoverview/?appid=730&market_hash_name=";
     private string marketCurrencyUrl = "&currency=";
-    private int currency;
+    public string _name="";
 
-    public string name="";
     private ItemBox(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public ItemBox(string name, string type, string imageUrl, string color, string itemTag, string marketHashName, string inspectUrl, bool autoFetchPrices, int currency) : this(new Gtk.Builder("ItemBox.ui"), "itemBox")
-    {
-        this.currency = currency;
-        marketCurrencyUrl += (currency + 1).ToString();
-        this.name = name;
-        labelName.SetLabel(name);
-        labelTag.SetLabel(itemTag);
-        labelType.SetLabel(type);
 
+    public ItemBox(string name, string type, string imageUrl, string color, string itemTag, string marketHashName, string inspectUrl, bool autoFetchPrices, int currency) : this(new Gtk.Builder("ItemBox.ui"), "_root")
+    {
+        marketCurrencyUrl += (currency + 1).ToString();
+        _name = name;
+        _labelName.SetLabel(name);
+        _labelTag.SetLabel(itemTag);
+        _labelType.SetLabel(type);
         //color name label
         if (color != null)
         {
-            labelName.SetUseMarkup(true);
-            labelName.SetMarkup("<b><span size=\"large\" color=\"#" + color + "\">" + name.Replace("&", "&amp;") + "</span></b>");
+            _labelName.SetUseMarkup(true);
+            _labelName.SetMarkup("<b><span size=\"large\" color=\"#" + color + "\">" + name.Replace("&", "&amp;") + "</span></b>");
         }
         else
         {
-            labelName.SetMarkup("<b><span size=\"large\">" + name.Replace("&", "&amp;") + "</span></b>");
+            _labelName.SetMarkup("<b><span size=\"large\">" + name.Replace("&", "&amp;") + "</span></b>");
         }
         //set inspect
         if (!string.IsNullOrEmpty(inspectUrl))
         {
-            labelInspect.SetMarkup("<a href='" + inspectUrl.ToString() + "'>Inspect</a>");
+            _labelInspect.SetMarkup("<a href='" + inspectUrl.ToString() + "'>Inspect</a>");
         }
-        buttonPrice.OnClicked += (_, _) => { SetItemPrice(marketHashName); };
+        _buttonPrice.OnClicked += (_, _) => { SetItemPrice(marketHashName); };
         //set aditional data
-        SetItemImage(image, imageUrl);
+        SetItemImage(_image, imageUrl);
         //get prices
         if (autoFetchPrices)
         {
@@ -58,6 +57,7 @@ public class ItemBox : Gtk.Box
         }
 
     }
+
     private async Task SetItemImage(Gtk.Image image, string url)
     {
         using (var webClient = new WebClient())
@@ -68,9 +68,10 @@ public class ItemBox : Gtk.Box
         }
 
     }
+
     private async Task SetItemPrice(string marketHashName)
     {
-        buttonPrice.SetVisible(false);
+        _buttonPrice.SetVisible(false);
         //handle & correctly
         string url = marketPriceUrl + marketHashName.Replace("&", "%26") + marketCurrencyUrl;
         try
@@ -93,20 +94,20 @@ public class ItemBox : Gtk.Box
                             {
                                 price = obj.SelectToken("$.median_price");
                             }
-                            //some items doesnt have price at all
+                            //some items do not have prices at all
                             if (price == null)
                             {
-                                labelPrice.SetText("Priceless");
+                                _labelPrice.SetText("Priceless");
                             }
                             else
                             {
-                                labelPrice.SetText(price.ToString());
+                                _labelPrice.SetText(price.ToString());
                             }
-                            labelPrice.SetCssClasses(["title-4"]);
+                            _labelPrice.SetCssClasses(["title-4"]);
                         }
                         else
                         {
-                            buttonPrice.SetVisible(true);
+                            _buttonPrice.SetVisible(true);
                             //alert
                         }
                     }
@@ -116,9 +117,9 @@ public class ItemBox : Gtk.Box
         catch (Exception exception)
         {
             Console.WriteLine(exception);
-            labelPrice.SetText("Too many requests");
-            buttonPrice.SetVisible(true);
-            labelPrice.SetCssClasses([""]);
+            _labelPrice.SetText("Too many requests");
+            _buttonPrice.SetVisible(true);
+            _labelPrice.SetCssClasses([""]);
         }
     }
     private static Pixbuf FromBytes(byte[] data)

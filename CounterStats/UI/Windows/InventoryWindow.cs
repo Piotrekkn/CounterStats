@@ -5,15 +5,13 @@ using Newtonsoft.Json.Linq;
 
 public class InventoryWindow : Gtk.Box
 {
-    [Gtk.Connect] private readonly Gtk.Box inventory_box;
-    [Gtk.Connect] private readonly Gtk.Box header_box;
-    [Gtk.Connect] private readonly Gtk.Scale scale;
-    [Gtk.Connect] private readonly Gtk.SearchEntry searchEntry;
-    [Gtk.Connect] private readonly Gtk.FlowBox flowBox;
-    [Gtk.Connect] private readonly Adw.Spinner spinner;
+    [Gtk.Connect] private readonly Gtk.Scale _scale;
+    [Gtk.Connect] private readonly Gtk.SearchEntry _searchEntry;
+    [Gtk.Connect] private readonly Gtk.FlowBox _flowBox;
+    [Gtk.Connect] private readonly Adw.Spinner _spinner;
     private string title = "";
     private string subtitle = "";
-    private ConfigurationManager configuration;
+    private ConfigurationManager _configuration;
     private string imageUrl = "https://community.cloudflare.steamstatic.com/economy/image/";
     private string baseURLstart = "https://steamcommunity.com/inventory/";
     private string baseURLend = "/730/2";
@@ -21,7 +19,7 @@ public class InventoryWindow : Gtk.Box
     private int minSize = 240;
     private int maxSize = 680;
     private int defaultSize = 380;
-    MainApp mainApp;
+    MainApp _mainApp;
     private Gtk.CssProvider cssProvider = new Gtk.CssProvider();
     private Gdk.Display display = Gdk.Display.GetDefault();
 
@@ -30,29 +28,29 @@ public class InventoryWindow : Gtk.Box
     {
         builder.Connect(this);
     }
-    public InventoryWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("InventoryWindow.ui"), "inventory_window")
+    public InventoryWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("InventoryWindow.ui"), "_root")
     {
-        this.mainApp = mainApp;
-        this.configuration = configuration;
-        baseURL = baseURLstart + configuration.SteamProfile + baseURLend;
+        _mainApp = mainApp;
+        _configuration = configuration;
+        baseURL = baseURLstart + _configuration.SteamProfile + baseURLend;
         OnMap += (_, _) => mainApp.SetTitle(title, subtitle);
         SetTitle("Inventory");
         OnRealize += (sender, e) => Fetch();
         //scale
-        scale.SetRange(minSize, maxSize);
-        scale.SetValue(defaultSize);
+        _scale.SetRange(minSize, maxSize);
+        _scale.SetValue(defaultSize);
         //mark the scale
-        scale.AddMark(defaultSize, Gtk.PositionType.Top, "");
-        scale.AddMark(0, Gtk.PositionType.Top, "");
-        scale.AddMark(maxSize, Gtk.PositionType.Top, "");
-        scale.OnValueChanged += (_, _) =>
+        _scale.AddMark(defaultSize, Gtk.PositionType.Top, "");
+        _scale.AddMark(0, Gtk.PositionType.Top, "");
+        _scale.AddMark(maxSize, Gtk.PositionType.Top, "");
+        _scale.OnValueChanged += (_, _) =>
         {
-            SetImageSizeValue((int)scale.GetValue());
+            SetImageSizeValue((int)_scale.GetValue());
 
         };
         SetImageSizeValue(defaultSize);
         //search entry
-        searchEntry.OnSearchChanged += (_, _) => SearchFilter(searchEntry.GetText());
+        _searchEntry.OnSearchChanged += (_, _) => SearchFilter(_searchEntry.GetText());
     }
 
 
@@ -67,16 +65,16 @@ public class InventoryWindow : Gtk.Box
     {
         this.title = title;
         this.subtitle = subtitle;
-        mainApp.SetTitle(title, subtitle);
+        _mainApp.SetTitle(title, subtitle);
     }
     private void CleanChildren()
     {
-        spinner.SetVisible(false);
-        Gtk.Widget toRemove = flowBox.GetLastChild();
+        _spinner.SetVisible(false);
+        Gtk.Widget toRemove = _flowBox.GetLastChild();
         while (toRemove != null)
         {
-            flowBox.Remove(toRemove);
-            toRemove = flowBox.GetLastChild();
+            _flowBox.Remove(toRemove);
+            toRemove = _flowBox.GetLastChild();
         }
     }
     private void HideChildren()
@@ -89,7 +87,7 @@ public class InventoryWindow : Gtk.Box
     }
     private void SetLoadingScreen()
     {
-        spinner.SetVisible(true);
+        _spinner.SetVisible(true);
     }
     private void Fetch()
     {
@@ -102,7 +100,7 @@ public class InventoryWindow : Gtk.Box
         HideChildren();
         foreach (ItemBox item in itemBoxList)
         {
-            if (item.name.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+            if (item._name.Contains(search, StringComparison.InvariantCultureIgnoreCase))
             {
                 item.GetParent().SetVisible(true);
             }
@@ -113,7 +111,7 @@ public class InventoryWindow : Gtk.Box
         CleanChildren();
         JObject obj = JObject.Parse(data);
         JToken items = obj.SelectToken("$.descriptions");
-        int limit = configuration.ItemsNumber;
+        int limit = _configuration.ItemsNumber;
         foreach (JToken item in items)
         {
             //make sure & is handled correctly
@@ -149,9 +147,9 @@ public class InventoryWindow : Gtk.Box
                         itemTag = tag.SelectToken("$.localized_tag_name");
                     }
                 }
-                ItemBox itemBox = new ItemBox(namee.ToString(), type.ToString(), imageUrl + imageUrlName.ToString() + "/?allow_animated=0", color.ToString(), itemTag.ToString(), marketHashName.ToString(), inspectUrlString, configuration.AutoFetchPrices, configuration.Currency);
+                ItemBox itemBox = new ItemBox(namee.ToString(), type.ToString(), imageUrl + imageUrlName.ToString() + "/?allow_animated=0", color.ToString(), itemTag.ToString(), marketHashName.ToString(), inspectUrlString, _configuration.AutoFetchPrices, _configuration.Currency);
                 itemBoxList.Add(itemBox);
-                flowBox.Append(itemBox);
+                _flowBox.Append(itemBox);
                 limit--;
                 if (limit == 0)
                 {

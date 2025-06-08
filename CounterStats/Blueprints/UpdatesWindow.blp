@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-Gtk.Box updates_window {
+Gtk.Box _root {
   vexpand: true;
   hexpand: true;
   orientation: vertical;
@@ -10,7 +10,7 @@ Gtk.Box updates_window {
     vexpand: true;
     hexpand: true;
 
-    Adw.Carousel carousel {
+    Adw.Carousel _carousel {
       spacing: 50;
       interactive: true;
       vexpand: true;
@@ -28,7 +28,7 @@ Gtk.Box updates_window {
     orientation: horizontal;
     hexpand: true;
 
-    Gtk.Button button_left {
+    Gtk.Button _buttonLeft {
       halign: start;
       margin-start: 10;
       margin-bottom: 10;
@@ -42,12 +42,12 @@ Gtk.Box updates_window {
     }
 
     Adw.CarouselIndicatorDots {
-      carousel: carousel;
+      carousel: _carousel;
       halign: center;
       hexpand: true;
     }
 
-    Gtk.Button button_right {
+    Gtk.Button _buttonRight {
       halign: end;
       height-request: 40;
       width-request: 40;
