@@ -19,9 +19,10 @@ rm -r flatpak_build/ # Remove the old build directory
 mkdir -p flatpak_build/
 
 # Build the app
-dotnet-warp -o flatpak_build/NEW2
+dotnet publish -c Release -o flatpak_build -r linux-x64 -p:PublishSingleFile=true
+
 cp -r data/* flatpak_build/ # Copy the data directory to the build directory
 
 # Build the flatpak
 cd flatpak_build/
-flatpak-builder --repo=repo --force-clean build-dir com.example.MyApp.yml --install --user
+flatpak-builder --repo=repo --force-clean build-dir org.CounterStats.yml --install --user

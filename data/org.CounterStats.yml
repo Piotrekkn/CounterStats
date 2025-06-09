@@ -1,6 +1,6 @@
-app-id: org.CounterStats
+app-id: org.counterstats.CounterStats
 runtime: org.gnome.Platform
-runtime-version: "43"
+runtime-version: "48"
 sdk: org.gnome.Sdk
 command: run.sh
 finish-args:
@@ -9,17 +9,18 @@ finish-args:
   - "--socket=fallback-x11"
   - "--device=dri"
   - "--socket=wayland"
+  - "--socket=session-bus"
 modules:
   - name: main-application
     buildsystem: simple
     build-commands:
       - "install -D CounterStats /app/bin/CounterStats"
       - "install -D run.sh /app/bin/run.sh"
-      - "install -D org.CounterStats.Desktop /app/share/applications/org.CounterStats.desktop"
+      - "install -D org.CounterStats.desktop /app/share/applications/org.CounterStats.desktop"
     sources:
       - type: file
         path: CounterStats
       - type: file
         path: run.sh
       - type: file
-        path: org.CounterStats
+        path: org.CounterStats.desktop

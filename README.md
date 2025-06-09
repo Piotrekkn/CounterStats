@@ -20,6 +20,11 @@ To run this project, run the following commands:
 dotnet run
 ```
 
+To build and install flatpak just run build_flatpak.sh:
+
+```bash
+./build_flatpak.sh
+```
 ### Windows
 Make sure to setup gtk and dotnet sdk first:
 
