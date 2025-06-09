@@ -100,7 +100,7 @@ public class InventoryWindow : Gtk.Box
         HideChildren();
         foreach (ItemBox item in itemBoxList)
         {
-            if (item._name.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+            if (item.Name.Contains(search, StringComparison.InvariantCultureIgnoreCase))
             {
                 item.GetParent().SetVisible(true);
             }

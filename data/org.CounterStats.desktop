@@ -2,4 +2,4 @@
 Type=Application
 Name=Counter Stats
 Exec=run.sh
-Icon=org.counterstats
+Icon=org.counterstats.CounterStats

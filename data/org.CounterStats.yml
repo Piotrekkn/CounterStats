@@ -14,9 +14,10 @@ modules:
   - name: main-application
     buildsystem: simple
     build-commands:
-      - "install -D CounterStats /app/bin/CounterStats"
-      - "install -D run.sh /app/bin/run.sh"
-      - "install -D org.CounterStats.desktop /app/share/applications/org.CounterStats.desktop"
+      - "install -Dm755 CounterStats -t /app/bin/"
+      - "install -Dm755 run.sh -t /app/bin/"
+      - "install -Dm644 org.CounterStats.desktop /app/share/applications/org.counterstats.CounterStats.desktop"
+      - "install -Dm644 org.counterstats.CounterStats.svg /app/share/icons/hicolor/scalable/apps/org.counterstats.CounterStats.svg"
     sources:
       - type: file
         path: CounterStats
@@ -24,3 +25,5 @@ modules:
         path: run.sh
       - type: file
         path: org.CounterStats.desktop
+      - type: file
+        path: org.counterstats.CounterStats.svg

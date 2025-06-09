@@ -18,7 +18,7 @@ public class ItemBox : Gtk.Box
     [Gtk.Connect] private readonly Gtk.Button _buttonPrice;
     private string marketPriceUrl = "https://steamcommunity.com/market/priceoverview/?appid=730&market_hash_name=";
     private string marketCurrencyUrl = "&currency=";
-    public string _name="";
+    public string Name { get; set; }
 
     private ItemBox(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
@@ -28,7 +28,7 @@ public class ItemBox : Gtk.Box
     public ItemBox(string name, string type, string imageUrl, string color, string itemTag, string marketHashName, string inspectUrl, bool autoFetchPrices, int currency) : this(new Gtk.Builder("ItemBox.ui"), "_root")
     {
         marketCurrencyUrl += (currency + 1).ToString();
-        _name = name;
+        Name = name;
         _labelName.SetLabel(name);
         _labelTag.SetLabel(itemTag);
         _labelType.SetLabel(type);
