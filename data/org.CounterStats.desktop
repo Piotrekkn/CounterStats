@@ -1,5 +1,5 @@
 [Desktop Entry]
 Type=Application
 Name=Counter Stats
-Exec=CounterStats
+Exec=run.sh
 Icon=org.counterstats

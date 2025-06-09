@@ -237,10 +237,22 @@ public class ProfileWindow : Gtk.Box
             Console.WriteLine(exception);
         }
     }
-    
+
     private async void SetData2(string data)
     {
-        JObject obj = JObject.Parse(data);
+        JObject obj = null;
+        try
+        {
+            obj = JObject.Parse(data);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+        }
+        if (obj == null)
+        {
+            return;
+        }
         _timeLabel.SetLabel("Time spent in game");
         _hsLabel.SetLabel("HS percentage");
         _ratioLabel.SetLabel("KD Ratio");
