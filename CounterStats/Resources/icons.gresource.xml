@@ -1,5 +1,5 @@
 <gresources>
   <gresource prefix="/org/counterstats/icons/">
-    <file>org.counterstats.svg</file>
+    <file>org.counterstats.CounterStats.svg</file>
   </gresource>
 </gresources>

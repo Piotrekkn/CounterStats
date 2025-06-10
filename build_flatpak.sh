@@ -6,11 +6,9 @@ then
     exit
 fi
 
-if ! command -v dotnet-warp &> /dev/null
+if ! command -v dotnet &> /dev/null
 then
-    echo "dotnet-warp could not be found"
-    echo "Please install it with 'dotnet tool install -g dotnet-warp'"
-    echo "and make sure it is in your \$PATH"
+    echo "dotnet could not be found"
     exit
 fi
 

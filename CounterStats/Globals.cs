@@ -1,4 +1,7 @@
+using HarfBuzz;
+
 namespace CounterStats;
+
 public static class Globals
 {
     /// <summary>The application ID that is used to identify your application,
@@ -21,5 +24,27 @@ public static class Globals
     public const string APP_DISPLAY_NAME = "Counter Stats";
 
     public const string VERSION = "alpha.0";
+
+    public static async Task<string> FetchData(string FetchURL)
+    {
+        try
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.GetAsync(FetchURL))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string data = await content.ReadAsStringAsync();
+                        return data;
+                    }
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            return exception.Message;
+        }
+    }
 
 }

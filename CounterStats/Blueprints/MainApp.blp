@@ -51,133 +51,6 @@ Adw.ApplicationWindow _root {
             styles [
               "navigation-sidebar",
             ]
-
-            Gtk.ListBoxRow _profileBoxRow {
-              name: "profile-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                Gtk.Image {
-                  icon-name: "avatar-default-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Your Profile";
-                }
-              }
-            }
-
-            Gtk.ListBoxRow _updatesBoxRow {
-              name: "updates-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                Gtk.Image {
-                  icon-name: "software-update-available-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Game Updates";
-                }
-              }
-            }
-
-            Gtk.ListBoxRow _inventoryBoxRow {
-              name: "inventory-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                Gtk.Image {
-                  icon-name: "package-x-generic-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Inventory";
-                }
-              }
-            }
-
-            Gtk.ListBoxRow _leaderboardBoxRow {
-              name: "leaderboard-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                styles [
-                  "navigation-sidebar",
-                ]
-
-                Gtk.Image {
-                  icon-name: "applications-games-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Leaderboards";
-                }
-              }
-            }
-
-            Gtk.ListBoxRow _statsBoxRow {
-              name: "stats-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                styles [
-                  "navigation-sidebar",
-                ]
-
-                Gtk.Image {
-                  icon-name: "view-list-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Player Statstics";
-                }
-              }
-            }
-
-            [bottom]
-            Gtk.ListBoxRow _findplayerBoxRow {
-              name: "findplayer-window";
-
-              styles [
-                "navigation-sidebar",
-              ]
-
-              Gtk.Box {
-                styles [
-                  "navigation-sidebar",
-                ]
-
-                Gtk.Image {
-                  icon-name: "system-search-symbolic";
-                  margin-end: 6;
-                }
-
-                Gtk.Label {
-                  label: "Find Player Stats";
-                }
-              }
-            }
           }
         }
       }
@@ -224,6 +97,10 @@ Adw.ApplicationWindow _root {
 }
 
 menu _primaryMenu {
+  section {
+    item (_("Refresh"), "app.refresh")
+  }
+
   section {
     item (_("Preferences"), "app.preferences")
   }

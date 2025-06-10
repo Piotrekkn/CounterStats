@@ -25,7 +25,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     {
         builder.Connect(this);
     }
-    public PreferencesDialog(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("PreferencesDialog.ui"), "_root")
+    public PreferencesDialog(MainApp mainApp, ConfigurationManager configuration, string[] windowList) : this(new Gtk.Builder("PreferencesDialog.ui"), "_root")
     {
         _configuration = configuration;
         _mainApp = mainApp;
@@ -52,8 +52,8 @@ public class PreferencesDialog : Adw.PreferencesDialog
         _clearCacheButton.OnActivated += (_, _) => configuration.ClearCache();
         _clearDataButton.OnActivated += (_, _) => configuration.ClearData();
         //default window combo row
-        _windowComboRow.SetSelected((uint)configuration.DefaultWindow);
-        _windowComboRow.OnNotify += (_, _) => { configuration.DefaultWindow = (int)_windowComboRow.GetSelected(); };
+        _windowComboRow.OnRealize += (_, _) => { PopulateWindowRow(windowList,configuration.DefaultWindow); }; 
+          _windowComboRow.OnNotify += (_, _) => { configuration.DefaultWindow = (int)_windowComboRow.GetSelected(); };      
         //inventory number of items
         _inventoryNumberSpinRow.SetAdjustment(Gtk.Adjustment.New(1000, 50, 5000, 50, 100, 0));
         _inventoryNumberSpinRow.SetValue(configuration.ItemsNumber);
@@ -82,18 +82,33 @@ public class PreferencesDialog : Adw.PreferencesDialog
         }
 
     }
+    private void PopulateWindowRow(string[] windowList, int defaultWindow)
+    {
+        Gtk.StringList stringList = new Gtk.StringList();
+        foreach (var item in windowList)
+        {
+             stringList.Append(item);
+         
+        }
+           _windowComboRow.SetModel(stringList);     
+            _windowComboRow.SetSelected((uint)defaultWindow);
+      
+     
+       
+  
+    }
     private void PopulateCurrencyRow()
     {
         Gtk.StringList stringList = new Gtk.StringList();
         foreach (var item in Enum.GetNames<Currency>())
         {
-             stringList.Append(item.ToString());
-         
-        }     
-    
+            stringList.Append(item.ToString());
+
+        }
+
         _currencyComboRow.SetModel(stringList);
         _currencyComboRow.SetSelected((uint)_configuration.Currency);
         _currencyComboRow.OnNotify += (_, _) => { _configuration.Currency = (int)_currencyComboRow.GetSelected(); };
-  
+
     }
 }

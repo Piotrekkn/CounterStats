@@ -1,0 +1,21 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.ListBoxRow _root {
+    name: "profile-window";
+
+    styles [
+        "navigation-sidebar",
+    ]
+
+    Gtk.Box {
+        Gtk.Image _icon {
+            icon-name: "";
+            margin-end: 6;
+        }
+
+        Gtk.Label _titleLabel {
+            label: "Your Profile";
+        }
+    }
+}

@@ -2,7 +2,7 @@ namespace CounterStats.UI.Windows;
 
 using Newtonsoft.Json.Linq;
 
-public class ProfileWindow : Gtk.Box
+public class ProfileWindow : Gtk.Box, IWindow
 {
     [Gtk.Connect] private readonly Gtk.Image _profileImage;
     [Gtk.Connect] private readonly Gtk.Label _labelRealName;
@@ -16,6 +16,8 @@ public class ProfileWindow : Gtk.Box
     [Gtk.Connect] private readonly Gtk.Label _timeLabel;
     [Gtk.Connect] private readonly Gtk.Label _timeLabelValue;
     [Gtk.Connect] private readonly Adw.Banner _banner;
+    public string WindowName { get; }
+    public string IconName { get; }
     private string title = "";
     private string subtitle = "";
     private ConfigurationManager _configuration;
@@ -26,14 +28,15 @@ public class ProfileWindow : Gtk.Box
         builder.Connect(this);
     }
 
-    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration) : this(new Gtk.Builder("ProfileWindow.ui"), "_root")
+    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration, string windowName, string iconName) : this(new Gtk.Builder("ProfileWindow.ui"), "_root")
     {
         _mainWindow = mainWindow;
         _configuration = configuration;
-        OnRealize += (sender, e) => Fetch();
+        WindowName = windowName;
+        IconName = iconName;
+        OnRealize += (sender, e) => Refresh();
         OnMap += (_, _) => mainWindow.SetTitle(title, subtitle);
         SetTitle("Your Profile");
-
     }
 
     private void SetTitle(string title, string subtitle = "")
@@ -43,58 +46,7 @@ public class ProfileWindow : Gtk.Box
         _mainWindow.SetTitle(title, subtitle);
     }
 
-    private async void SetBackground()
-    {
-
-        string baseURL = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            JObject obj = JObject.Parse(data);
-                            if (obj.SelectToken("$.response").SelectToken("$.profile_background") == null)
-                            {
-                                return;
-                            }
-                            JToken player = obj.SelectToken("$.response").SelectToken("$.profile_background").SelectToken("$.image_large");
-                            string image = "https://cdn.fastly.steamstatic.com/steamcommunity/public/images/" + player.ToString();
-
-                            string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/background.jpg";
-                            if (!System.IO.File.Exists(dir))
-                            {
-                                using var client2 = new HttpClient();
-                                byte[] imageBytes = await client2.GetByteArrayAsync(image);
-                                await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
-                            }
-                            string cssData = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
-                            Gtk.CssProvider cssProvider = new Gtk.CssProvider();
-                            cssProvider.LoadFromString(cssData);
-                            AddCssClass("profileWindowBox");
-                            Gdk.Display display = Gdk.Display.GetDefault();
-                            Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Data is null!");
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
-    }
-
-    private void Fetch()
+    public void Refresh()
     {
         _banner.SetRevealed(false);
 
@@ -103,7 +55,62 @@ public class ProfileWindow : Gtk.Box
             SetBanner("API is empty, make sure to set it in the prefrences");
             return;
         }
-        FetchData();
+        //TODO
+        SetDataAsync();
+        SetDataAsync2();
+        SetBackgroundAsync();
+    }
+    private async Task SetDataAsync()
+    {
+        string url = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + _configuration.ApiKey + "&steamids=" + _configuration.SteamProfile;
+        string data = await Globals.FetchData(url);
+        SetData(data);
+    }
+    private async Task SetDataAsync2()
+    {
+        string url = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
+        string data = await Globals.FetchData(url);
+        SetData2(data);
+    }
+
+    private async Task SetBackgroundAsync()
+    {
+        string url = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
+        string data = await Globals.FetchData(url);
+
+        if (data != null)
+        {
+            JObject obj = JObject.Parse(data);
+            if (obj.SelectToken("$.response").SelectToken("$.profile_background") == null)
+            {
+                return;
+            }
+            JToken player = obj.SelectToken("$.response").SelectToken("$.profile_background").SelectToken("$.image_large");
+            string image = "https://cdn.fastly.steamstatic.com/steamcommunity/public/images/" + player.ToString();
+
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/background.jpg";
+            if (!System.IO.File.Exists(dir))
+            {
+                using var client2 = new HttpClient();
+                byte[] imageBytes = await client2.GetByteArrayAsync(image);
+                await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
+            }
+            string cssData = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
+            Gtk.CssProvider cssProvider = new Gtk.CssProvider();
+            cssProvider.LoadFromString(cssData);
+            AddCssClass("profileWindowBox");
+            Gdk.Display display = Gdk.Display.GetDefault();
+            Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
+        }
+        else
+        {
+            Console.WriteLine("Data is null!");
+        }
+    }
+
+    public void CleanChildren()
+    {
+
     }
 
     private void SetBanner(string text)
@@ -115,8 +122,6 @@ public class ProfileWindow : Gtk.Box
 
     private async void SetData(string data)
     {
-        SetBackground();
-        FetchData2();
         JObject obj;
         if (data.Contains("{\"response\":{\"players\":[]}}"))
         {
@@ -175,67 +180,6 @@ public class ProfileWindow : Gtk.Box
             await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
         }
         _profileImage.SetFromFile(dir);
-    }
-
-    private async void FetchData()
-    {
-        string baseURL = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + _configuration.ApiKey + "&steamids=" + _configuration.SteamProfile;
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            SetData(data);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Data is null!");
-                        }
-                    }
-                }
-            }
-
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
-    }
-
-    private async void FetchData2()
-    {
-        string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile; ;
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            SetData2(data);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Data is null!");
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
     }
 
     private async void SetData2(string data)

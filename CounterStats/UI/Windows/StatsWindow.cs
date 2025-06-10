@@ -2,26 +2,33 @@ namespace CounterStats.UI.Windows;
 
 using Newtonsoft.Json.Linq;
 
-public class StatsWindow : Gtk.Box
+public class StatsWindow : Gtk.Box, IWindow
 {
-
     [Gtk.Connect] private readonly Gtk.Box _statsWindowBox;
     [Gtk.Connect] private readonly Adw.Banner _banner;
+    public string WindowName { get; }
+    public string IconName { get; }
     private MainApp _mainApp;
     private ConfigurationManager _configuration;
+    string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=";
+
     private StatsWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public StatsWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("StatsWindow.ui"), "_root")
+
+    public StatsWindow(MainApp mainApp, ConfigurationManager configuration, string windowName, string iconName) : this(new Gtk.Builder("StatsWindow.ui"), "_root")
     {
+        WindowName = windowName;
         _configuration = configuration;
         _mainApp = mainApp;
-        OnRealize += (sender, e) => Fetch();
+        IconName = iconName;
+        OnRealize += (sender, e) => Refresh();
         OnMap += (_, _) => mainApp.SetTitle("Player Statstics");
         mainApp.SetTitle("Player Statstics");
     }
-    private void CleanChildren()
+
+    public void CleanChildren()
     {
         Gtk.Widget toRemove = _statsWindowBox.GetLastChild();
         //clear window
@@ -31,10 +38,24 @@ public class StatsWindow : Gtk.Box
             toRemove = _statsWindowBox.GetLastChild();
         }
     }
-    private void Fetch()
+
+    public void Refresh()
     {
-        FetchData();
+        CleanChildren();
+        Adw.Spinner spinner = new Adw.Spinner();
+        spinner.SetHexpand(true);
+        spinner.SetVexpand(true);
+        _statsWindowBox.Append(spinner);
+        SetDataAsync();
     }
+
+    private async Task SetDataAsync()
+    {
+        string url = baseURL + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
+        string data = await Globals.FetchData(url);
+        SetData(data);
+    }
+
     private void SetData(string data)
     {
         CleanChildren();
@@ -65,12 +86,14 @@ public class StatsWindow : Gtk.Box
             preferencesPage.Add(preferencesGroup(name, token.SelectToken("$.value").ToString()));
         }
     }
+
     private void SetBanner(string text)
     {
         Console.WriteLine($"Banner: {text}");
         _banner.SetTitle(text);
         _banner.SetRevealed(true);
     }
+
     private Adw.PreferencesGroup preferencesGroup(string title, string subtitle)
     {
         Adw.ActionRow actionRow = new Adw.ActionRow();
@@ -81,37 +104,5 @@ public class StatsWindow : Gtk.Box
         actionRow.Title = title;
         actionRow.Subtitle = subtitle;
         return preferencesGroup;
-    }
-
-    private async void FetchData()
-    {
-        string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            SetData(data);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Data is null!");
-                            //ALERT?                            
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-
-        }
     }
 }

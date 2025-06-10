@@ -12,13 +12,9 @@ public class MainApp : Adw.ApplicationWindow
     [Gtk.Connect] private readonly Adw.WindowTitle _windowTitle;
     [Gtk.Connect] private readonly Gtk.Button _showSidebarButton;
     [Gtk.Connect] private readonly Gtk.ListBox _listView;
-    [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;  
+    [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;
     private ConfigurationManager _configurationManager;
-    private UpdatesWindow? _updatesWindow;
-    private StatsWindow? _statsWindow;
-    private ProfileWindow? _profileWindow;
-    private LeaderboardWindow? _leaderboardWindow;
-    private InventoryWindow? _inventoryWindow;
+    private List<IWindow> _windowList = new List<IWindow>();
     private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
@@ -29,35 +25,35 @@ public class MainApp : Adw.ApplicationWindow
         _configurationManager = new ConfigurationManager(this);
         application.ActiveWindow.WidthRequest = 900;
         application.OnShutdown += (_, _) => OnShutdownApp();
-        _listView.OnRowActivated += (_, _) => { OnRowChange(); };
         _showSidebarButton.OnClicked += (_, _) => ToogleSplitView();
         //create actions
         CreateAction("About", (_, _) => { OnAboutAction(); });
         CreateAction("Quit", (_, _) => { Application.Quit(); }, ["<Ctrl>Q"]);
         CreateAction("Preferences", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>comma"]);
-        CreateAction("GetNews", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>R"]);
+        CreateAction("Refresh", (_, _) => { OnRefreshAction(); }, ["<Ctrl>R"]);
         //windows
-        _statsWindow = new StatsWindow(this, _configurationManager);
-        _profileWindow = new ProfileWindow(this, _configurationManager);
-        _updatesWindow = new UpdatesWindow(this, _configurationManager);
-        _inventoryWindow = new InventoryWindow(this, _configurationManager);
-        _leaderboardWindow = new LeaderboardWindow(this);
+        _windowList.Add(new ProfileWindow(this, _configurationManager, "Your Profile", "avatar-default-symbolic"));
+        _windowList.Add(new UpdatesWindow(this, _configurationManager, "Game Updates", "software-update-available-symbolic"));
+        _windowList.Add(new InventoryWindow(this, _configurationManager, "Inventory", "package-x-generic-symbolic"));
+        _windowList.Add(new LeaderboardWindow(this, "Leaderboards", "applications-games-symbolic"));
+        _windowList.Add(new StatsWindow(this, _configurationManager, "Player Statistics", "view-list-symbolic"));
 
-        //add windows to stack
-        _stack.AddChild(_profileWindow);
-        _stack.AddChild(_updatesWindow);
-        _stack.AddChild(_inventoryWindow);
-        _stack.AddChild(_statsWindow);
-        _stack.AddChild(_leaderboardWindow);
-        //select the row in the sidebar an set the window
-        SetWindow(_configurationManager.DefaultWindow + 1);
+        //add windows to stack and sidebar
+        for (int i = 0; i < _windowList.Count; i++)
+        {   //stack
+            _stack.AddChild((Gtk.Widget)_windowList[i]);
+            //sidebar
+            SidebarBoxRow sidebarBoxRow = new SidebarBoxRow(this, _windowList[i].WindowName, _windowList[i].IconName, i);
+            _listView.Append(sidebarBoxRow);
+        }
+        SetWindow(_configurationManager.DefaultWindow);
         _listView.SelectRow(GetListBoxRowByID(_configurationManager.DefaultWindow));
     }
     private void OnAboutAction()
-    {         
+    {
         var about = Adw.AboutDialog.New();
         about.ApplicationName = "Counter Stats";
-        about.SetApplicationIcon("org.counterstats");
+        about.SetApplicationIcon("org.counterstats.CounterStats");
         about.DeveloperName = "El Bandito❦Mágico";
         about.Version = Globals.VERSION;
         about.Developers = ["El Bandito❦Mágico"];
@@ -67,7 +63,12 @@ public class MainApp : Adw.ApplicationWindow
     }
     private void OnPreferencesAction()
     {
-        PreferencesDialog? preferencesDialog = new PreferencesDialog(this, _configurationManager);
+        List<string> list = new List<string>();
+        foreach (var item in _windowList)
+        {
+            list.Add(item.WindowName);
+        }
+        PreferencesDialog? preferencesDialog = new PreferencesDialog(this, _configurationManager, list.ToArray());
         preferencesDialog.Present(this);
     }
     private void OnShutdownApp()
@@ -77,6 +78,14 @@ public class MainApp : Adw.ApplicationWindow
             _configurationManager.ClearCache();
         }
         Console.WriteLine("BYE BYE");
+    }
+    private void OnRefreshAction()
+    {
+        IWindow window = (IWindow)_stack.GetVisibleChild();
+        if (window != null)
+        {
+            window.Refresh();
+        }
     }
     public void SetTitle(string title, string subtitle = "")
     {
@@ -112,52 +121,24 @@ public class MainApp : Adw.ApplicationWindow
         }
         return (Gtk.ListBoxRow)listBoxRow;
     }
-    private void OnRowChange()
-    {
-        Console.WriteLine(_listView.GetFocusChild().Name);
-        if (_listView.GetFocusChild().Name == "profile-window")
-            SetWindow(1);
-        if (_listView.GetFocusChild().Name == "updates-window")
-            SetWindow(2);
-        if (_listView.GetFocusChild().Name == "inventory-window")
-            SetWindow(3);
-        if (_listView.GetFocusChild().Name == "leaderboard-window")
-            SetWindow(4);
-        if (_listView.GetFocusChild().Name == "stats-window")
-            SetWindow(5);
 
-    }
     public void SetWindow(int windowId)
     {
-        Console.WriteLine($"Window {windowId}");
-        switch (windowId)
+        //check if valid window
+        if (windowId < 0 || windowId >= _windowList.Count)
         {
-            case 1:
-                _stack.SetFocusChild(_profileWindow);
-                _stack.VisibleChild = _profileWindow;
-                break;
-            case 2:
-                _stack.SetFocusChild(_updatesWindow);
-                _stack.VisibleChild = _updatesWindow;
-                break;
-            case 3:
-                _stack.SetFocusChild(_inventoryWindow);
-                _stack.VisibleChild = _inventoryWindow;
-                break;
-            case 4:
-                _stack.SetFocusChild(_leaderboardWindow);
-                _stack.VisibleChild = _leaderboardWindow;
-                break;
-            case 5:
-                _stack.SetFocusChild(_statsWindow);
-                _stack.VisibleChild = _statsWindow;
-                break;
-            case 0:
-            default:
-                _stack.SetFocusChild(null);
-                break;
+            //check if there is at least one window
+            if (_windowList.Count != 0)
+            {
+                windowId = 0;
+            }
+            else //there are no windows to choose from
+            {
+                return;
+            }
         }
-
+        _stack.SetFocusChild((Gtk.Widget)_windowList[windowId]);
+        _stack.VisibleChild = (Gtk.Widget)_windowList[windowId];
     }
 
 

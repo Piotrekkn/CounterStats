@@ -1,28 +1,66 @@
 namespace CounterStats.UI.Windows;
 
+using System.Threading.Tasks;
 using CounterStats.UI.Elements;
 using Newtonsoft.Json.Linq;
 
-public class UpdatesWindow : Gtk.Box
+public class UpdatesWindow : Gtk.Box, IWindow
 {
     [Gtk.Connect] private readonly Adw.Carousel _carousel;
     [Gtk.Connect] private readonly Gtk.Button _buttonLeft;
     [Gtk.Connect] private readonly Gtk.Button _buttonRight;
+    public string WindowName { get; }
+    public string IconName { get; }
     private uint currentPos = 0;
+    private string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=";
     private ConfigurationManager _configuration;
+
     private UpdatesWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public UpdatesWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("UpdatesWindow.ui"), "_root")
+
+    public UpdatesWindow(MainApp mainApp, ConfigurationManager configuration, string windowName, string iconName) : this(new Gtk.Builder("UpdatesWindow.ui"), "_root")
     {
         _configuration = configuration;
+        WindowName = windowName;
+        IconName = iconName;
         _buttonRight.OnClicked += (_, _) => MoveToNextPage();
         _buttonLeft.OnClicked += (_, _) => MoveToPrevPage();
-        OnRealize += (sender, e) => Fetch();
+        OnRealize += (sender, e) => Refresh();
         _carousel.OnPageChanged += (_, e) => { currentPos = e.Index; };
-        OnMap += (_, _) => mainApp.SetTitle("Game Updates");
-        mainApp.SetTitle("Game Updates");
+        OnMap += (_, _) => mainApp.SetTitle(WindowName);
+        mainApp.SetTitle(WindowName);
+    }
+
+    public void CleanChildren()
+    {
+        Gtk.Widget toRemove = _carousel.GetLastChild();
+        //clear window
+        while (toRemove != null)
+        {
+            _carousel.Remove(toRemove);
+            toRemove = _carousel.GetLastChild();
+        }
+    }
+
+    public void Refresh()
+    {
+        CleanChildren();
+        //spinner
+        Adw.Spinner spinner = new Adw.Spinner();
+        spinner.SetHexpand(true);
+        spinner.SetVexpand(true);
+        _carousel.Append(spinner);
+        //set data
+        SetDataAsync();
+    }
+
+    private async Task SetDataAsync()
+    {
+        string url = baseURL + _configuration.UpdatesNumber;
+        string data = await Globals.FetchData(url);
+        AppendPosts(data);
     }
 
     private void AppendPosts(string data)
@@ -33,7 +71,7 @@ public class UpdatesWindow : Gtk.Box
         }
         JObject obj = JObject.Parse(data);
         JToken appnews = obj.SelectToken("$.appnews");
-
+        CleanChildren();
         foreach (JToken item in appnews.SelectToken("$.newsitems"))
         {
             string contents = item.SelectToken("$.contents").ToString();
@@ -60,53 +98,6 @@ public class UpdatesWindow : Gtk.Box
         if (currentPos > 0)
         {
             _carousel.ScrollTo(_carousel.GetNthPage(currentPos - 1), true);
-        }
-    }
-
-    private void CleanChildren()
-    {
-        Gtk.Widget toRemove = _carousel.GetLastChild();
-        //clear window
-        while (toRemove != null)
-        {
-            _carousel.Remove(toRemove);
-            toRemove = _carousel.GetLastChild();
-        }
-
-    }
-    private void Fetch()
-    {
-        FetchData();
-    }
-
-    private async void FetchData()
-    {
-        string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=" + _configuration.UpdatesNumber;
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            CleanChildren();
-                            AppendPosts(data);
-                        }
-                        else
-                        {
-                            //ALERT?
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
         }
     }
 }

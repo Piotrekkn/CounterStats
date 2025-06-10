@@ -2,13 +2,15 @@ namespace CounterStats.UI.Windows;
 
 using Newtonsoft.Json.Linq;
 
-public class LeaderboardWindow : Gtk.Box
+public class LeaderboardWindow : Gtk.Box, IWindow
 {
     [Gtk.Connect] private readonly Gtk.Box _leaderboardBox;
     [Gtk.Connect] private readonly Gtk.DropDown _dropdown;
     [Gtk.Connect] private readonly Gtk.ToggleButton _buttonSmallLeader;
+    public string WindowName { get; }
+    public string IconName { get; }
     string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season2";
-    private string[] regions = new string[8] { "World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa" };
+    private string[] regions = ["World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa"];
     private string title = "";
     private string subtitle = "";
     MainApp _mainApp;
@@ -16,11 +18,13 @@ public class LeaderboardWindow : Gtk.Box
     {
         builder.Connect(this);
     }
-    public LeaderboardWindow(MainApp mainApp) : this(new Gtk.Builder("LeaderboardWindow.ui"), "_root")
+    public LeaderboardWindow(MainApp mainApp, string windowName, string iconName) : this(new Gtk.Builder("LeaderboardWindow.ui"), "_root")
     {
         _mainApp = mainApp;
-        OnRealize += (sender, e) => Fetch();
-        _buttonSmallLeader.OnClicked += (sender, e) => Fetch((int)_dropdown.GetSelected());
+        WindowName = windowName;
+        IconName = iconName;
+        OnRealize += (sender, e) => Refresh();
+        _buttonSmallLeader.OnClicked += (sender, e) => Refresh();
         OnMap += (_, _) => mainApp.SetTitle(title, subtitle);
         SetTitle("Leaderboards", regions[0]);
         //dropdown menu
@@ -38,7 +42,7 @@ public class LeaderboardWindow : Gtk.Box
         this.subtitle = subtitle;
         _mainApp.SetTitle(title, subtitle);
     }
-    private void CleanChildren()
+    public void CleanChildren()
     {
         Gtk.Widget toRemove = _leaderboardBox.GetLastChild();
         while (toRemove != null)
@@ -54,11 +58,26 @@ public class LeaderboardWindow : Gtk.Box
         spinner.SetVexpand(true);
         _leaderboardBox.Append(spinner);
     }
+    public void Refresh()
+    {
+        Fetch((int)_dropdown.GetSelected());
+    }
     private void Fetch(int regionId = 0)
     {
         CleanChildren();
         SetLoadingScreen();
-        FetchData(regionId);
+        SetDataAsync(regionId);
+    }
+    private async Task SetDataAsync(int regionId)
+    {
+        string url = fetchURL;
+        //add region and remove white spaces
+        if (regionId != 0)
+        {
+            url += "_" + regions[regionId].Replace(" ", "");
+        }
+        string data = await Globals.FetchData(url);
+        SetData(data);
     }
 
     private void SetData(string data)
@@ -118,6 +137,7 @@ public class LeaderboardWindow : Gtk.Box
             }
         }
     }
+
     private string ColorScore(int score)
     {
         score = score >> 15;
@@ -137,40 +157,5 @@ public class LeaderboardWindow : Gtk.Box
         else
         { color = "#b0c3da"; }
         return "<span color=\"" + color + "\">" + score.ToString() + "</span>";
-    }
-    private async void FetchData(int regionId = 0)
-    {
-        string baseURL = fetchURL;
-        //add region and remove white spaces
-        if (regionId != 0)
-        {
-            baseURL += "_" + regions[regionId].Replace(" ", "");
-        }
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            SetData(data);
-                        }
-                        else
-                        {
-                            //ALERT?
-                        }
-                    }
-                }
-            }
-
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
     }
 }

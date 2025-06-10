@@ -3,19 +3,23 @@ namespace CounterStats.UI.Windows;
 using CounterStats.UI.Elements;
 using Newtonsoft.Json.Linq;
 
-public class InventoryWindow : Gtk.Box
+public class InventoryWindow : Gtk.Box, IWindow
 {
     [Gtk.Connect] private readonly Gtk.Scale _scale;
+
     [Gtk.Connect] private readonly Gtk.SearchEntry _searchEntry;
+
     [Gtk.Connect] private readonly Gtk.FlowBox _flowBox;
+
     [Gtk.Connect] private readonly Adw.Spinner _spinner;
+    public string WindowName { get; }
+    public string IconName { get; }
     private string title = "";
     private string subtitle = "";
     private ConfigurationManager _configuration;
     private string imageUrl = "https://community.cloudflare.steamstatic.com/economy/image/";
     private string baseURLstart = "https://steamcommunity.com/inventory/";
     private string baseURLend = "/730/2";
-    private string baseURL;
     private int minSize = 240;
     private int maxSize = 680;
     private int defaultSize = 380;
@@ -24,18 +28,21 @@ public class InventoryWindow : Gtk.Box
     private Gdk.Display display = Gdk.Display.GetDefault();
 
     List<ItemBox> itemBoxList = new List<ItemBox>();
+
     private InventoryWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public InventoryWindow(MainApp mainApp, ConfigurationManager configuration) : this(new Gtk.Builder("InventoryWindow.ui"), "_root")
+
+    public InventoryWindow(MainApp mainApp, ConfigurationManager configuration, string windowName, string iconName) : this(new Gtk.Builder("InventoryWindow.ui"), "_root")
     {
+        WindowName = windowName;
         _mainApp = mainApp;
         _configuration = configuration;
-        baseURL = baseURLstart + _configuration.SteamProfile + baseURLend;
+        IconName = iconName;
         OnMap += (_, _) => mainApp.SetTitle(title, subtitle);
         SetTitle("Inventory");
-        OnRealize += (sender, e) => Fetch();
+        OnRealize += (sender, e) => Refresh();
         //scale
         _scale.SetRange(minSize, maxSize);
         _scale.SetValue(defaultSize);
@@ -46,29 +53,29 @@ public class InventoryWindow : Gtk.Box
         _scale.OnValueChanged += (_, _) =>
         {
             SetImageSizeValue((int)_scale.GetValue());
-
         };
         SetImageSizeValue(defaultSize);
         //search entry
         _searchEntry.OnSearchChanged += (_, _) => SearchFilter(_searchEntry.GetText());
     }
 
-
     private void SetImageSizeValue(int value)
     {
         string cssData = ".imageItemBox { min-height: " + value.ToString() + "px ; min-width: " + value.ToString() + "px ;}";
         cssProvider.LoadFromString(cssData);
         Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
-
     }
+
     private void SetTitle(string title, string subtitle = "")
     {
         this.title = title;
         this.subtitle = subtitle;
         _mainApp.SetTitle(title, subtitle);
     }
-    private void CleanChildren()
+
+    public void CleanChildren()
     {
+        itemBoxList = new List<ItemBox>();
         _spinner.SetVisible(false);
         Gtk.Widget toRemove = _flowBox.GetLastChild();
         while (toRemove != null)
@@ -77,23 +84,31 @@ public class InventoryWindow : Gtk.Box
             toRemove = _flowBox.GetLastChild();
         }
     }
+
     private void HideChildren()
     {
         foreach (ItemBox item in itemBoxList)
         {
             item.GetParent().SetVisible(false);
-
         }
     }
+
     private void SetLoadingScreen()
     {
         _spinner.SetVisible(true);
     }
-    private void Fetch()
+
+    public void Refresh()
     {
         CleanChildren();
         SetLoadingScreen();
-        FetchData();
+        SetDataAsync();
+    }
+    private async Task SetDataAsync()
+    {
+        string url = baseURLstart + _configuration.SteamProfile + baseURLend;
+        string data = await Globals.FetchData(url);
+        SetData(data);
     }
     private void SearchFilter(string search)
     {
@@ -106,6 +121,7 @@ public class InventoryWindow : Gtk.Box
             }
         }
     }
+
     private void SetData(string data)
     {
         CleanChildren();
@@ -115,8 +131,8 @@ public class InventoryWindow : Gtk.Box
         foreach (JToken item in items)
         {
             //make sure & is handled correctly
-            var namee = item.SelectToken("$.market_name").ToString();
-            if (namee != null)
+            var itemName = item.SelectToken("$.market_name").ToString();
+            if (itemName != null)
             {
                 var type = item.SelectToken("$.type");
                 var imageUrlName = item.SelectToken("$.icon_url");
@@ -147,7 +163,17 @@ public class InventoryWindow : Gtk.Box
                         itemTag = tag.SelectToken("$.localized_tag_name");
                     }
                 }
-                ItemBox itemBox = new ItemBox(namee.ToString(), type.ToString(), imageUrl + imageUrlName.ToString() + "/?allow_animated=0", color.ToString(), itemTag.ToString(), marketHashName.ToString(), inspectUrlString, _configuration.AutoFetchPrices, _configuration.Currency);
+                ItemBox itemBox = new ItemBox(
+                    itemName.ToString(),
+                    type.ToString(),
+                    imageUrl + imageUrlName.ToString() + "/?allow_animated=0",
+                    color.ToString(),
+                    itemTag.ToString(),
+                    marketHashName.ToString(),
+                    inspectUrlString,
+                    _configuration.AutoFetchPrices,
+                    _configuration.Currency
+                );
                 itemBoxList.Add(itemBox);
                 _flowBox.Append(itemBox);
                 limit--;
@@ -157,35 +183,7 @@ public class InventoryWindow : Gtk.Box
                 }
             }
         }
-
-    }
-    private async void FetchData()
-    {
-        try
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.GetAsync(baseURL))
-                {
-                    res.EnsureSuccessStatusCode();
-                    using (HttpContent content = res.Content)
-                    {
-                        string data = await content.ReadAsStringAsync();
-                        if (data != null)
-                        {
-                            SetData(data);
-                        }
-                        else
-                        {
-                            //ALERT?
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-        }
+        //filter items
+        SearchFilter(_searchEntry.GetText());
     }
 }
