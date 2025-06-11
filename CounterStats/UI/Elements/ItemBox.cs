@@ -87,7 +87,6 @@ public class ItemBox : Gtk.Box
                         if (data != null)
                         {
                             JObject obj = JObject.Parse(data);
-                            Console.WriteLine(data.ToString());
                             JToken price = obj.SelectToken("$.lowest_price");
                             //sometimes only median price is avaliable
                             if (price == null)

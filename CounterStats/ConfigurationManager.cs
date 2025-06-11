@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Pango;
 using CounterStats.UI;
 
 public class ConfigurationManager
@@ -17,13 +16,17 @@ public class ConfigurationManager
         public bool AutoFetchPrices { get; set; }
         public int Currency { get; set; }
     }
+
     public string ApiKey
     {
         get { return apiKey; }
         set
         {
             if (apiKey != value)
-            { apiKey = value; Save(); }
+            {
+                apiKey = value;
+                Save();
+            }
         }
     }
     private string apiKey;
@@ -33,7 +36,10 @@ public class ConfigurationManager
         set
         {
             if (steamProfile != value)
-            { steamProfile = value; Save(); }
+            {
+                steamProfile = value;
+                Save();
+            }
         }
     }
     private string steamProfile;
@@ -43,7 +49,10 @@ public class ConfigurationManager
         set
         {
             if (useMarkup != value)
-            { useMarkup = value; Save(); }
+            {
+                useMarkup = value;
+                Save();
+            }
         }
     }
     private bool useMarkup;
@@ -53,7 +62,10 @@ public class ConfigurationManager
         set
         {
             if (updatesNumber != value)
-            { updatesNumber = value; Save(); }
+            {
+                updatesNumber = value;
+                Save();
+            }
         }
     }
     private int updatesNumber;
@@ -63,7 +75,10 @@ public class ConfigurationManager
         set
         {
             if (clearCacheOnQuit != value)
-            { clearCacheOnQuit = value; Save(); }
+            {
+                clearCacheOnQuit = value;
+                Save();
+            }
         }
     }
     private bool clearCacheOnQuit;
@@ -73,7 +88,10 @@ public class ConfigurationManager
         set
         {
             if (defaultWindow != value)
-            { defaultWindow = value; Save(); }
+            {
+                defaultWindow = value;
+                Save();
+            }
         }
     }
     private int defaultWindow;
@@ -83,7 +101,10 @@ public class ConfigurationManager
         set
         {
             if (itemsNumber != value)
-            { itemsNumber = value; Save(); }
+            {
+                itemsNumber = value;
+                Save();
+            }
         }
     }
     private int itemsNumber;
@@ -94,24 +115,33 @@ public class ConfigurationManager
         set
         {
             if (autoFetchPrices != value)
-            { autoFetchPrices = value; Save(); }
+            {
+                autoFetchPrices = value;
+                Save();
+            }
         }
     }
     private bool autoFetchPrices;
-       public int Currency
+    public int Currency
     {
         get { return currency; }
         set
         {
             if (currency != value)
-            { currency = value; Save(); }
+            {
+                currency = value;
+                Save();
+            }
         }
     }
     private int currency;
     private MainApp _mainApp;
-    private string cacheDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
-    private string configDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
+    private string cacheDir =
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
+    private string configDir =
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
     private string configFile = "data.json";
+
     public ConfigurationManager(MainApp mainApp)
     {
         _mainApp = mainApp;
@@ -130,11 +160,12 @@ public class ConfigurationManager
             DefaultWindow = this.DefaultWindow,
             ItemsNumber = this.ItemsNumber,
             AutoFetchPrices = this.AutoFetchPrices,
-            Currency = this.Currency
+            Currency = this.Currency,
         };
         string jsonString = JsonSerializer.Serialize(data);
         File.WriteAllText(configDir + configFile, jsonString);
     }
+
     private void Load()
     {
         System.IO.Directory.CreateDirectory(cacheDir);
@@ -161,8 +192,8 @@ public class ConfigurationManager
         {
             NewData();
         }
-
     }
+
     private void NewData()
     {
         ApiKey = "";
@@ -175,6 +206,7 @@ public class ConfigurationManager
         AutoFetchPrices = false;
         Currency = 0;
     }
+
     public void ClearCache()
     {
         //create and display dialog
@@ -196,6 +228,7 @@ public class ConfigurationManager
             }
         };
     }
+
     public void ClearData()
     {
         //create and display dialog
@@ -205,7 +238,9 @@ public class ConfigurationManager
         alertDialog.SetResponseAppearance("confirm", Adw.ResponseAppearance.Destructive);
         alertDialog.SetResponseAppearance("cancel", Adw.ResponseAppearance.Default);
         alertDialog.SetHeading("Do you want to delete all of the configuration data?");
-        alertDialog.SetBody("This action will delete all the configuration data (including apis and logins), temporary files and cache data!. Application will be closed");
+        alertDialog.SetBody(
+            "This action will delete all the configuration data (including apis and logins), temporary files and cache data!. Application will be closed"
+        );
         alertDialog.Present(_mainApp);
         //handle the response
         alertDialog.OnResponse += (_, res) =>
@@ -218,9 +253,9 @@ public class ConfigurationManager
                 DeleteDirectory(configDir);
                 _mainApp.Application.Quit();
             }
-
         };
     }
+
     private void DeleteDirectory(string dir)
     {
         if (!System.IO.Directory.Exists(dir))
@@ -243,7 +278,7 @@ public class ConfigurationManager
                 }
             }
         }
-        //remove the directory 
+        //remove the directory
         try
         {
             System.IO.Directory.Delete(dir);

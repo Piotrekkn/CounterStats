@@ -1,5 +1,8 @@
 namespace CounterStats.UI.Windows;
 
+using System.Text.RegularExpressions;
+using System.Threading.Tasks.Dataflow;
+using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 public class ProfileWindow : Gtk.Box, IWindow
@@ -8,13 +11,15 @@ public class ProfileWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Gtk.Label _labelRealName;
     [Gtk.Connect] private readonly Gtk.Label _labelLocation;
     [Gtk.Connect] private readonly Gtk.Label _labelName;
-    [Gtk.Connect] private readonly Gtk.Label _timeCreated;
+    [Gtk.Connect] private readonly Gtk.Label _labelTimeCreated;
+    [Gtk.Connect] private readonly Gtk.Label _labelSummary;
     [Gtk.Connect] private readonly Gtk.Label _ratioLabel;
     [Gtk.Connect] private readonly Gtk.Label _ratioLabelValue;
     [Gtk.Connect] private readonly Gtk.Label _hsLabel;
     [Gtk.Connect] private readonly Gtk.Label _hsLabelValue;
     [Gtk.Connect] private readonly Gtk.Label _timeLabel;
     [Gtk.Connect] private readonly Gtk.Label _timeLabelValue;
+    [Gtk.Connect] private readonly Gtk.Label _labelVac;
     [Gtk.Connect] private readonly Adw.Banner _banner;
     public string WindowName { get; }
     public string IconName { get; }
@@ -22,21 +27,37 @@ public class ProfileWindow : Gtk.Box, IWindow
     private string subtitle = "";
     private ConfigurationManager _configuration;
     private MainApp _mainWindow;
+    private string steamProfileID;
 
     private ProfileWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
 
-    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration, string windowName, string iconName) : this(new Gtk.Builder("ProfileWindow.ui"), "_root")
+    public ProfileWindow(MainApp mainWindow, ConfigurationManager configuration, string windowName, string iconName, string steamProfile = null) : this(new Gtk.Builder("ProfileWindow.ui"), "_root")
     {
+        if (string.IsNullOrEmpty(steamProfile))
+        {
+            this.steamProfileID = configuration.SteamProfile;
+        }
+        else
+        {
+            this.steamProfileID = steamProfile;
+        }
         _mainWindow = mainWindow;
         _configuration = configuration;
         WindowName = windowName;
         IconName = iconName;
         OnRealize += (sender, e) => Refresh();
         OnMap += (_, _) => mainWindow.SetTitle(title, subtitle);
-        SetTitle("Your Profile");
+        if (string.IsNullOrEmpty(steamProfile))
+        {
+            SetTitle("Your Profile");
+        }
+        else
+        {
+            SetTitle("Profile");
+        }
     }
 
     private void SetTitle(string title, string subtitle = "")
@@ -49,33 +70,39 @@ public class ProfileWindow : Gtk.Box, IWindow
     public void Refresh()
     {
         _banner.SetRevealed(false);
-
+        if (String.IsNullOrEmpty(steamProfileID))
+        {
+            SetBanner("Steam Profile ID is empty, make sure to set it in the prefrences");
+            return;
+        }
+        SetProfileDataAsync();
+        SetBackgroundAsync();
         if (String.IsNullOrEmpty(_configuration.ApiKey))
         {
             SetBanner("API is empty, make sure to set it in the prefrences");
             return;
         }
-        //TODO
-        SetDataAsync();
-        SetDataAsync2();
-        SetBackgroundAsync();
+        GetStatsAsync();
     }
-    private async Task SetDataAsync()
+    private async Task SetProfileDataAsync()
     {
-        string url = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=" + _configuration.ApiKey + "&steamids=" + _configuration.SteamProfile;
+        //string url = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + _configuration.ApiKey + "&steamids=" + steamProfile;
+        string url = "https://steamcommunity.com/profiles/" + steamProfileID + "/?xml=1";
         string data = await Globals.FetchData(url);
-        SetData(data);
+        SteamProfile steamProfile = new SteamProfile(data);
+        SetData(steamProfile);
     }
-    private async Task SetDataAsync2()
+    private async Task GetStatsAsync()
     {
-        string url = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
+        string url = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + steamProfileID;
         string data = await Globals.FetchData(url);
-        SetData2(data);
+        SetStats(data);
     }
 
     private async Task SetBackgroundAsync()
     {
-        string url = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?key=" + _configuration.ApiKey + "&steamid=" + _configuration.SteamProfile;
+        string url = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?steamid=" + steamProfileID;
+
         string data = await Globals.FetchData(url);
 
         if (data != null)
@@ -120,53 +147,43 @@ public class ProfileWindow : Gtk.Box, IWindow
         _banner.SetRevealed(true);
     }
 
-    private async void SetData(string data)
+    private void SetData(SteamProfile steamProfile)
     {
-        JObject obj;
-        if (data.Contains("{\"response\":{\"players\":[]}}"))
+
+        _labelName.SetText(steamProfile.Name);
+        SetTitle("Your Profile", steamProfile.Name);
+
+        if (!string.IsNullOrEmpty(steamProfile.Location))
         {
-            SetBanner("Profile id is wrong, make sure correct id is set in prefrences");
-            return;
+            _labelLocation.SetText(steamProfile.Location);
         }
-        try
+        if (!string.IsNullOrEmpty(steamProfile.Avatar))
         {
-            obj = JObject.Parse(data);
+            SetAvatar(steamProfile.Avatar);
         }
-        catch (System.Exception)
+        if (!string.IsNullOrEmpty(steamProfile.SecondaryName))
         {
-            if (data.Contains("Please verify your <pre>key=</pre> parameter."))
+            _labelRealName.SetText(steamProfile.SecondaryName);
+        }
+        if (!string.IsNullOrEmpty(steamProfile.TimeCreated))
+        {
+            _labelTimeCreated.SetText(steamProfile.TimeCreated);
+        }
+        if (!string.IsNullOrEmpty(steamProfile.Summary))
+        {
+            _labelSummary.SetText(Regex.Replace(steamProfile.Summary, "<.*?>", String.Empty));
+            _labelSummary.SetMarkup(steamProfile.Summary);
+        }
+        if (!string.IsNullOrEmpty(steamProfile.VacBanned))
+        {
+            if (Convert.ToInt32(steamProfile.VacBanned) == 0)
             {
-                SetBanner("API is wrong, make sure correct api is set in prefrences");
-            }
-            else if (data.Contains("429 Too Many Requests"))
-            {
-                SetBanner("Too many request");
+                _labelVac.SetMarkup("<span color=\"green\">Account In Good VAC Standing</span>");
             }
             else
             {
-                SetBanner("Error parsing data");
+                _labelVac.SetMarkup("<span color=\"red\"><b>VAC BANNED!!!!!!!!!!!!!!!!!</b></span>");
             }
-            return;
-        }
-        //check for profile id
-        JToken player = obj.SelectToken("$.response").SelectToken("$.players")[0];
-        Console.WriteLine(player.SelectToken("$.avatar").ToString());
-        _labelName.SetText(player.SelectToken("$.personaname").ToString());
-        SetTitle("Your Profile", player.SelectToken("$.personaname").ToString());
-        if (player.SelectToken("$.realname") != null)
-            _labelRealName.SetText(player.SelectToken("$.realname").ToString());
-        if (player.SelectToken("$.loccityid") != null)
-            _labelLocation.SetText(player.SelectToken("$.loccityid").ToString() + ", " + player.SelectToken("$.locstatecode").ToString() + ", " + player.SelectToken("$.loccountrycode").ToString());
-        if (player.SelectToken("$.avatarfull") != null)
-        {
-            string avatar_url = player.SelectToken("$.avatarfull").ToString();
-            SetAvatar(avatar_url);
-        }
-        if (player.SelectToken("$.timecreated") != null)
-        {
-            long dateLong = (long)Convert.ToDouble(player.SelectToken("$.timecreated").ToString());
-            System.DateTime dateTime = DateTimeOffset.FromUnixTimeSeconds(dateLong).LocalDateTime;
-            _timeCreated.SetText("Account created:\n" + dateTime.ToString("dddd, dd MMMM yyyy H:mm:ss"));
         }
     }
 
@@ -182,7 +199,7 @@ public class ProfileWindow : Gtk.Box, IWindow
         _profileImage.SetFromFile(dir);
     }
 
-    private async void SetData2(string data)
+    private async void SetStats(string data)
     {
         JObject obj = null;
         try

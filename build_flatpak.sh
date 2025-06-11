@@ -24,3 +24,12 @@ cp -r data/* flatpak_build/ # Copy the data directory to the build directory
 # Build the flatpak
 cd flatpak_build/
 flatpak-builder --repo=repo --force-clean build-dir org.CounterStats.yml --install --user
+
+# Export flatpak to file
+flatpak build-bundle repo CounterStats.flatpak org.counterstats.CounterStats --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+#finnish
+echo
+echo Your flatpak file is in flatpak_build/CounterStats.flatpak
+echo
+echo You can run CounterStats with: flatpak run org.counterstats.CounterStats
