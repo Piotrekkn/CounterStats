@@ -31,6 +31,7 @@ To build and install flatpak just run build_flatpak.sh:
 ```bash
 ./build_flatpak.sh
 ```
+
 ### Windows
 Make sure to setup gtk and dotnet sdk first:
 
@@ -53,11 +54,11 @@ dotnet run
 ```
 
 #### Building
-To build and copy necessary files 
+To build and install flatpak just run build_windows.bat
 
-make sure "mingw_dir=" is set correctly (set by default to "C:\msys64\mingw64") in the script
+>make sure "mingw_dir=" is set correctly (set by default to "C:\\msys64\\mingw64") in the script
 
-Run build_windows.bat:
+Run: 
 
 ```bash
 ./build_windows.bat
