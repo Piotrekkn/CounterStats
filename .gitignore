@@ -482,3 +482,5 @@ CounterStats/Build
 
 # This is a temporary directory used for compiling a flatpak
 flatpak_build/
+# This is a temporary directory used for compiling a windows build
+windows_build/
