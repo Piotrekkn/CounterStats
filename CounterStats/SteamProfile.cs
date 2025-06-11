@@ -18,7 +18,7 @@ public class SteamProfile
         var doc = XDocument.Parse(data);
         foreach (var a in doc.Descendants())
         {
-            if (a.Name == "avatarFull")
+            if (a.Name == "avatarFull" && a.Parent.Name == "profile")
             {
                 Avatar = a.Value.ToString();
             }
