@@ -1,0 +1,63 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box _root {
+    css-classes: [
+        'card',
+    ];
+
+    vexpand: false;
+    hexpand: false;
+
+    Gtk.Box {
+        vexpand: true;
+        hexpand: true;
+        orientation: horizontal;
+
+        Gtk.Label _flagLabel {
+            vexpand: true;
+            margin-bottom: 5;
+            margin-top: 5;
+            margin-start: 10;
+            margin-end: 10;
+        }
+
+        Gtk.Box {
+            vexpand: true;
+            hexpand: true;
+            orientation: vertical;
+
+            Gtk.Label _titleLabel {
+                vexpand: true;
+                xalign: 0.5;
+                margin-bottom: 8;
+                margin-top: 8;
+
+                css-classes: [
+                    'title-2',
+                ];
+            }
+
+            Gtk.Label _loadLabel {
+                vexpand: true;
+                xalign: 0;
+                margin-bottom: 5;
+
+                css-classes: [
+                    'title-4',
+                ];
+            }
+
+            Gtk.Label _capLabel {
+                vexpand: true;
+                xalign: 0;
+
+                css-classes: [
+                    'title-4',
+                ];
+
+                margin-bottom: 10;
+            }
+        }
+    }
+}

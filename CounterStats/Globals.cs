@@ -22,8 +22,14 @@ public static class Globals
     /// This should be automatically replaced when the application is created.
     /// </summary>
     public const string APP_DISPLAY_NAME = "Counter Stats";
-
+    /// <summary>
+    /// version
+    /// </summary>
     public const string VERSION = "alpha.0";
+    public const string COLOR_RED = "#e62d42";
+    public const string COLOR_GREEN = "#3a944a";
+    public const string COLOR_BLUE = "#3584e4";
+    public const string COLOR_YELLOW = "#c88800";
 
     public static async Task<string> FetchData(string FetchURL)
     {

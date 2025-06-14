@@ -31,12 +31,13 @@ public class MainApp : Adw.ApplicationWindow
         CreateAction("Quit", (_, _) => { Application.Quit(); }, ["<Ctrl>Q"]);
         CreateAction("Preferences", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>comma"]);
         CreateAction("Refresh", (_, _) => { OnRefreshAction(); }, ["<Ctrl>R"]);
-        //windows
+        //windows        
         _windowList.Add(new ProfileWindow(this, _configurationManager, "Your Profile", "avatar-default-symbolic"));
         _windowList.Add(new UpdatesWindow(this, _configurationManager, "Game Updates", "software-update-available-symbolic"));
         _windowList.Add(new InventoryWindow(this, _configurationManager, "Inventory", "package-x-generic-symbolic"));
         _windowList.Add(new LeaderboardWindow(this, "Leaderboards", "applications-games-symbolic"));
         _windowList.Add(new StatsWindow(this, _configurationManager, "Player Statistics", "view-list-symbolic"));
+        _windowList.Add(new StatusWindow(this, _configurationManager, "Server Status", "network-workgroup-symbolic"));
 
         //add windows to stack and sidebar
         for (int i = 0; i < _windowList.Count; i++)

@@ -1,0 +1,345 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box _root {
+  vexpand: true;
+  hexpand: true;
+  orientation: vertical;
+
+  Adw.Banner _banner {
+    revealed: false;
+  }
+
+  Gtk.Box {
+    orientation: vertical;
+    hexpand: true;
+    vexpand: true;
+
+    Gtk.Box {
+      Gtk.Label {
+        width-request: 400;
+        xalign: 0;
+        valign: start;
+        hexpand: true;
+        margin-start: 20;
+        margin-bottom: 10;
+        label: _("Server Status");
+
+        styles [
+          'large-title',
+        ]
+      }
+
+      Gtk.Label _refreshLabel {
+        width-request: 200;
+        xalign: 0;
+        halign: end;
+        valign: center;
+        hexpand: true;
+        margin-start: 20;
+        margin-end: 20;
+        margin-bottom: 10;
+        label: _("");
+
+        styles [
+          'dimmed',
+        ]
+      }
+    }
+
+    ScrolledWindow {
+      Gtk.Box {
+        hexpand: true;
+        vexpand: true;
+        margin-bottom: 20;
+
+        Adw.Spinner _spinner {
+          visible: false;
+          hexpand: true;
+          vexpand: true;
+        }
+
+        Gtk.Box _contentBox {
+          orientation: vertical;
+          hexpand: true;
+          vexpand: true;
+
+          Gtk.Label {
+            width-request: 600;
+            xalign: 0;
+            valign: center;
+            hexpand: true;
+            margin-start: 20;
+            margin-bottom: 10;
+            label: _("Services");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.Box {
+            orientation: horizontal;
+            hexpand: true;
+            vexpand: true;
+            valign: center;
+            halign: center;
+            spacing: 30;
+
+            Gtk.Box {
+              width-request: 250;
+              height-request: 250;
+              orientation: vertical;
+              valign: center;
+              halign: center;
+
+              Gtk.Label {
+                hexpand: true;
+                valign: center;
+                halign: center;
+                margin-top: 20;
+                label: _("Sessions logon");
+
+                styles [
+                  'title-3',
+                ]
+              }
+
+              Gtk.Label _sessionsLabel {
+                hexpand: true;
+                vexpand: true;
+                valign: center;
+                halign: center;
+                label: _("");
+
+                styles [
+                  'title-2',
+                ]
+              }
+
+              styles [
+                'card',
+              ]
+            }
+
+            Gtk.Box {
+              width-request: 250;
+              height-request: 250;
+              orientation: vertical;
+              valign: center;
+              halign: center;
+
+              Gtk.Label {
+                hexpand: true;
+                valign: center;
+                halign: center;
+                margin-top: 20;
+                label: _("Steam community");
+
+                styles [
+                  'title-3',
+                ]
+              }
+
+              Gtk.Label _communityLabel {
+                hexpand: true;
+                vexpand: true;
+                valign: center;
+                halign: center;
+                label: _("");
+
+                styles [
+                  'title-2',
+                ]
+              }
+
+              styles [
+                'card',
+              ]
+            }
+
+            Gtk.Box {
+              width-request: 250;
+              height-request: 250;
+              orientation: vertical;
+              valign: center;
+              halign: center;
+
+              Gtk.Label {
+                hexpand: true;
+                valign: center;
+                halign: center;
+                margin-top: 20;
+                label: _("Leaderboards");
+
+                styles [
+                  'title-3',
+                ]
+              }
+
+              Gtk.Label _leaderboardsLabel {
+                hexpand: true;
+                vexpand: true;
+                valign: center;
+                halign: center;
+                label: _("");
+
+                styles [
+                  'title-2',
+                ]
+              }
+
+              styles [
+                'card',
+              ]
+            }
+
+            Gtk.Box {
+              width-request: 250;
+              height-request: 250;
+              orientation: vertical;
+              valign: center;
+              halign: center;
+
+              Gtk.Label {
+                hexpand: true;
+                valign: center;
+                halign: center;
+                margin-top: 20;
+                label: _("Matchmaking");
+
+                styles [
+                  'title-3',
+                ]
+              }
+
+              Gtk.Label _matchmakingLabel {
+                hexpand: true;
+                vexpand: true;
+                valign: center;
+                halign: center;
+                label: _("normal");
+
+                styles [
+                  'title-4',
+                ]
+              }
+
+              styles [
+                'card',
+              ]
+            }
+          }
+
+          Gtk.Label {
+            width-request: 600;
+            xalign: 0;
+            valign: center;
+            hexpand: true;
+            margin-start: 20;
+            margin-bottom: 20;
+            label: _("Europe");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.FlowBox _boxStatus {
+            orientation: horizontal;
+            vexpand: true;
+            hexpand: true;
+            row-spacing: 10;
+            column-spacing: 10;
+            margin-start: 30;
+            margin-end: 30;
+            max-children-per-line: 3;
+            min-children-per-line: 3;
+            homogeneous: true;
+          }
+
+          Gtk.Label {
+            width-request: 600;
+            xalign: 0;
+            valign: center;
+            hexpand: true;
+            margin-start: 20;
+            margin-bottom: 20;
+            label: _("Americas");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.FlowBox _boxStatusAmericas {
+            orientation: horizontal;
+            vexpand: true;
+            hexpand: true;
+            row-spacing: 10;
+            column-spacing: 10;
+            margin-start: 30;
+            margin-end: 30;
+            max-children-per-line: 3;
+            min-children-per-line: 3;
+            homogeneous: true;
+          }
+
+          Gtk.Label {
+            width-request: 600;
+            xalign: 0;
+            valign: center;
+            hexpand: true;
+            margin-start: 20;
+            margin-bottom: 20;
+            label: _("Asia");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.FlowBox _boxStatusAsia {
+            orientation: horizontal;
+            vexpand: true;
+            hexpand: true;
+            row-spacing: 10;
+            column-spacing: 10;
+            margin-start: 30;
+            margin-end: 30;
+            max-children-per-line: 3;
+            min-children-per-line: 3;
+            homogeneous: true;
+          }
+
+          Gtk.Label {
+            width-request: 600;
+            xalign: 0;
+            valign: center;
+            hexpand: true;
+            margin-start: 20;
+            margin-bottom: 20;
+            label: _("Rest of the World");
+
+            styles [
+              'large-title',
+            ]
+          }
+
+          Gtk.FlowBox _boxStatusRest {
+            orientation: horizontal;
+            vexpand: true;
+            hexpand: true;
+            row-spacing: 10;
+            column-spacing: 10;
+            margin-start: 30;
+            margin-end: 30;
+            max-children-per-line: 3;
+            min-children-per-line: 3;
+            homogeneous: true;
+          }
+        }
+      }
+    }
+  }
+}
