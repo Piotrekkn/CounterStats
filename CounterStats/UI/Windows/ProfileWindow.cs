@@ -178,11 +178,11 @@ public class ProfileWindow : Gtk.Box, IWindow
         {
             if (Convert.ToInt32(steamProfile.VacBanned) == 0)
             {
-                _labelVac.SetMarkup("<span color=\"green\">Account In Good VAC Standing</span>");
+                _labelVac.SetMarkup("<span color=\"" + Globals.COLOR_GREEN + "\">Account In Good VAC Standing</span>");
             }
             else
             {
-                _labelVac.SetMarkup("<span color=\"red\"><b>VAC BANNED!!!!!!!!!!!!!!!!!</b></span>");
+                _labelVac.SetMarkup("<span color=\"" + Globals.COLOR_RED + "\"><b>VAC BANNED!!!!!!!!!!!!!</b></span>");
             }
         }
     }

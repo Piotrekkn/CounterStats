@@ -50,7 +50,6 @@ public class SteamProfile
             {
                 Summary = a.Value.ToString();
             }
-
         }
     }
 }

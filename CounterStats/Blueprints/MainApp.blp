@@ -6,14 +6,6 @@ Adw.ApplicationWindow _root {
   default-height: 850;
   title: "Counter Stats";
 
-  Adw.Breakpoint {
-    condition ("max-width:1100")
-
-    setters {
-      _splitView.collapsed: true;
-    }
-  }
-
   content: Adw.OverlaySplitView _splitView {
     [sidebar]
     Adw.NavigationPage {

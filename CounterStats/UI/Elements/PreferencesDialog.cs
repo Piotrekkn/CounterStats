@@ -15,6 +15,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.ComboRow _windowComboRow;
     [Gtk.Connect] private readonly Adw.SpinRow _inventoryNumberSpinRow;
     [Gtk.Connect] private readonly Adw.ActionRow _apiActionRow;
+    [Gtk.Connect] private readonly Adw.SwitchRow _sidebarHideRow;
     [Gtk.Connect] private readonly Adw.SwitchRow _inventoryAutoPriceSwitchRow;
     [Gtk.Connect] private readonly Adw.PreferencesPage _apiPage;
     [Gtk.Connect] private readonly Adw.ComboRow _currencyComboRow;
@@ -52,8 +53,11 @@ public class PreferencesDialog : Adw.PreferencesDialog
         _clearCacheButton.OnActivated += (_, _) => configuration.ClearCache();
         _clearDataButton.OnActivated += (_, _) => configuration.ClearData();
         //default window combo row
-        _windowComboRow.OnRealize += (_, _) => { PopulateWindowRow(windowList,configuration.DefaultWindow); }; 
-          _windowComboRow.OnNotify += (_, _) => { configuration.DefaultWindow = (int)_windowComboRow.GetSelected(); };      
+        _windowComboRow.OnRealize += (_, _) => { PopulateWindowRow(windowList, configuration.DefaultWindow); };
+        _windowComboRow.OnNotify += (_, _) => { configuration.DefaultWindow = (int)_windowComboRow.GetSelected(); };
+        //hide sidebar switch row
+        _sidebarHideRow.SetActive(configuration.HideSidebar);
+        _sidebarHideRow.OnNotify += (_, _) => { configuration.HideSidebar = _sidebarHideRow.GetActive(); };
         //inventory number of items
         _inventoryNumberSpinRow.SetAdjustment(Gtk.Adjustment.New(1000, 50, 5000, 50, 100, 0));
         _inventoryNumberSpinRow.SetValue(configuration.ItemsNumber);
@@ -87,15 +91,15 @@ public class PreferencesDialog : Adw.PreferencesDialog
         Gtk.StringList stringList = new Gtk.StringList();
         foreach (var item in windowList)
         {
-             stringList.Append(item);
-         
+            stringList.Append(item);
+
         }
-           _windowComboRow.SetModel(stringList);     
-            _windowComboRow.SetSelected((uint)defaultWindow);
-      
-     
-       
-  
+        _windowComboRow.SetModel(stringList);
+        _windowComboRow.SetSelected((uint)defaultWindow);
+
+
+
+
     }
     private void PopulateCurrencyRow()
     {

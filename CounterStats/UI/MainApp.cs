@@ -4,7 +4,7 @@ using CounterStats.UI.Windows;
 using CounterStats.UI.Elements;
 using Gio;
 using GObject;
-using HarfBuzz;
+using Gtk;
 
 public class MainApp : Adw.ApplicationWindow
 {
@@ -13,17 +13,21 @@ public class MainApp : Adw.ApplicationWindow
     [Gtk.Connect] private readonly Gtk.Button _showSidebarButton;
     [Gtk.Connect] private readonly Gtk.ListBox _listView;
     [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;
+    private Adw.Breakpoint _breakpoint;
     private ConfigurationManager _configurationManager;
     private List<IWindow> _windowList = new List<IWindow>();
-    private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
+    private int breakpointWidth = 1150;
+
+    private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), true))
     {
         builder.Connect(this);
+        Console.WriteLine(builder.GetPointer(name).ToString());
     }
     public MainApp(Adw.Application application) : this(new Gtk.Builder("MainApp.ui"), "_root")
     {
         Application = application;
         _configurationManager = new ConfigurationManager(this);
-        application.ActiveWindow.WidthRequest = 900;
+        application.ActiveWindow.WidthRequest = 940;
         application.OnShutdown += (_, _) => OnShutdownApp();
         _showSidebarButton.OnClicked += (_, _) => ToogleSplitView();
         //create actions
@@ -49,6 +53,21 @@ public class MainApp : Adw.ApplicationWindow
         }
         SetWindow(_configurationManager.DefaultWindow);
         _listView.SelectRow(GetListBoxRowByID(_configurationManager.DefaultWindow));
+        //Sidebar
+        if (_configurationManager.HideSidebar)
+        {
+            _splitView.SetCollapsed(true);
+        }
+        //break point
+        Adw.Breakpoint breakpoint = new Adw.Breakpoint();
+        this.AddBreakpoint(breakpoint);
+        breakpoint.SetCondition(Adw.BreakpointCondition.Parse("max-width:" + breakpointWidth.ToString()));
+        breakpoint.OnApply += (_, _) => { _splitView.SetCollapsed(true); };
+        breakpoint.OnUnapply += (_, _) =>
+        {
+            if (!_configurationManager.HideSidebar)
+            { _splitView.SetCollapsed(false); }
+        };
     }
     private void OnAboutAction()
     {
@@ -109,7 +128,14 @@ public class MainApp : Adw.ApplicationWindow
 
     private void ToogleSplitView()
     {
-        _splitView.SetCollapsed(!_splitView.GetCollapsed());
+        if (_splitView.Collapsed == true && this.GetWidth() <= breakpointWidth)
+        {
+            _splitView.SetShowSidebar(true);
+        }
+        else
+        {
+            _splitView.SetCollapsed(!_splitView.GetCollapsed());
+        }
     }
 
     private Gtk.ListBoxRow GetListBoxRowByID(int id)
@@ -141,6 +167,4 @@ public class MainApp : Adw.ApplicationWindow
         _stack.SetFocusChild((Gtk.Widget)_windowList[windowId]);
         _stack.VisibleChild = (Gtk.Widget)_windowList[windowId];
     }
-
-
 }
