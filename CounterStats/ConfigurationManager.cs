@@ -16,6 +16,7 @@ public class ConfigurationManager
         public bool AutoFetchPrices { get; set; }
         public int Currency { get; set; }
         public bool HideSidebar { get; set; }
+        public int CurrentTheme { get; set; }
     }
 
     public string ApiKey
@@ -150,6 +151,19 @@ public class ConfigurationManager
         }
     }
     private bool hideSidebar;
+    public int CurrentTheme
+    {
+        get { return currentTheme; }
+        set
+        {
+            if (currentTheme != value)
+            {
+                currentTheme = value;
+                Save();
+            }
+        }
+    }
+    private int currentTheme;
     private MainApp _mainApp;
     private string cacheDir =
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
@@ -177,6 +191,7 @@ public class ConfigurationManager
             AutoFetchPrices = this.AutoFetchPrices,
             Currency = this.Currency,
             HideSidebar = this.HideSidebar,
+            CurrentTheme = this.CurrentTheme,
         };
         string jsonString = JsonSerializer.Serialize(data);
         File.WriteAllText(configDir + configFile, jsonString);
@@ -204,6 +219,7 @@ public class ConfigurationManager
             AutoFetchPrices = data.AutoFetchPrices;
             Currency = data.Currency;
             HideSidebar = data.HideSidebar;
+            CurrentTheme = data.CurrentTheme;
         }
         else
         {
@@ -222,6 +238,8 @@ public class ConfigurationManager
         ItemsNumber = 300;
         AutoFetchPrices = false;
         Currency = 0;
+        HideSidebar = false;
+        CurrentTheme = 0;
     }
 
     public void ClearCache()

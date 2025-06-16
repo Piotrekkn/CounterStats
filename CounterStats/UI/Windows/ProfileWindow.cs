@@ -102,9 +102,7 @@ public class ProfileWindow : Gtk.Box, IWindow
     private async Task SetBackgroundAsync()
     {
         string url = $"https://api.steampowered.com/IPlayerService/GetProfileBackground/v1/?steamid=" + steamProfileID;
-
         string data = await Globals.FetchData(url);
-
         if (data != null)
         {
             JObject obj = JObject.Parse(data);
@@ -137,7 +135,7 @@ public class ProfileWindow : Gtk.Box, IWindow
 
     public void CleanChildren()
     {
-
+        return;
     }
 
     private void SetBanner(string text)

@@ -19,17 +19,15 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.SwitchRow _inventoryAutoPriceSwitchRow;
     [Gtk.Connect] private readonly Adw.PreferencesPage _apiPage;
     [Gtk.Connect] private readonly Adw.ComboRow _currencyComboRow;
-    private MainApp _mainApp;
     private ConfigurationManager _configuration;
 
     private PreferencesDialog(Gtk.Builder builder, string name) : base(new Adw.Internal.PreferencesDialogHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
-    public PreferencesDialog(MainApp mainApp, ConfigurationManager configuration, string[] windowList) : this(new Gtk.Builder("PreferencesDialog.ui"), "_root")
+    public PreferencesDialog(ConfigurationManager configuration, string[] windowList) : this(new Gtk.Builder("PreferencesDialog.ui"), "_root")
     {
         _configuration = configuration;
-        _mainApp = mainApp;
         //api entry
         _apiEntryRow.SetText(configuration.ApiKey);
         _apiEntryRow.OnNotify += (_, _) => { configuration.ApiKey = _apiEntryRow.GetText(); SetApiIcon(); };
@@ -69,8 +67,6 @@ public class PreferencesDialog : Adw.PreferencesDialog
         _inventoryAutoPriceSwitchRow.OnRealize += (_, _) => { SetApiIcon(); };
         //currency row
         _currencyComboRow.OnRealize += (_, _) => { PopulateCurrencyRow(); };
-
-
     }
 
     private void SetApiIcon()
@@ -84,23 +80,19 @@ public class PreferencesDialog : Adw.PreferencesDialog
         {
             _apiPage.SetIconName("weather-severe-alert-symbolic");
         }
-
     }
+
     private void PopulateWindowRow(string[] windowList, int defaultWindow)
     {
         Gtk.StringList stringList = new Gtk.StringList();
         foreach (var item in windowList)
         {
             stringList.Append(item);
-
         }
         _windowComboRow.SetModel(stringList);
         _windowComboRow.SetSelected((uint)defaultWindow);
-
-
-
-
     }
+
     private void PopulateCurrencyRow()
     {
         Gtk.StringList stringList = new Gtk.StringList();
@@ -109,10 +101,8 @@ public class PreferencesDialog : Adw.PreferencesDialog
             stringList.Append(item.ToString());
 
         }
-
         _currencyComboRow.SetModel(stringList);
         _currencyComboRow.SetSelected((uint)_configuration.Currency);
         _currencyComboRow.OnNotify += (_, _) => { _configuration.Currency = (int)_currencyComboRow.GetSelected(); };
-
     }
 }

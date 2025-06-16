@@ -7,9 +7,12 @@ Adw.ApplicationWindow _root {
   title: "Counter Stats";
 
   content: Adw.OverlaySplitView _splitView {
+    sidebar-width-fraction: 0.01;
+
     [sidebar]
     Adw.NavigationPage {
       title: _("Counter Stats");
+      width-request: 240;
 
       [child]
       Adw.ToolbarView {
@@ -25,7 +28,7 @@ Adw.ApplicationWindow _root {
           }
 
           [end]
-          MenuButton {
+          MenuButton _menuButton {
             tooltip-text: _("Main Menu");
             icon-name: "open-menu-symbolic";
             menu-model: _primaryMenu;
@@ -89,6 +92,12 @@ Adw.ApplicationWindow _root {
 }
 
 menu _primaryMenu {
+  section {
+    item {
+      custom: "ThemeSelector";
+    }
+  }
+
   section {
     item (_("Refresh"), "app.refresh")
   }

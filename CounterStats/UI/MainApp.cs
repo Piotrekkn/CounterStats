@@ -13,7 +13,7 @@ public class MainApp : Adw.ApplicationWindow
     [Gtk.Connect] private readonly Gtk.Button _showSidebarButton;
     [Gtk.Connect] private readonly Gtk.ListBox _listView;
     [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;
-    private Adw.Breakpoint _breakpoint;
+    [Gtk.Connect] private readonly MenuButton _menuButton;
     private ConfigurationManager _configurationManager;
     private List<IWindow> _windowList = new List<IWindow>();
     private int breakpointWidth = 1150;
@@ -45,7 +45,7 @@ public class MainApp : Adw.ApplicationWindow
 
         //add windows to stack and sidebar
         for (int i = 0; i < _windowList.Count; i++)
-        {   //stack
+        { //stack
             _stack.AddChild((Gtk.Widget)_windowList[i]);
             //sidebar
             SidebarBoxRow sidebarBoxRow = new SidebarBoxRow(this, _windowList[i].WindowName, _windowList[i].IconName, i);
@@ -68,7 +68,11 @@ public class MainApp : Adw.ApplicationWindow
             if (!_configurationManager.HideSidebar)
             { _splitView.SetCollapsed(false); }
         };
+        //theme switcher
+        PopoverMenu a = (PopoverMenu)_menuButton.GetPopover();
+        a.AddChild(new ThemeSelector(_configurationManager), "ThemeSelector");
     }
+
     private void OnAboutAction()
     {
         var about = Adw.AboutDialog.New();
@@ -81,6 +85,7 @@ public class MainApp : Adw.ApplicationWindow
         about.AddLink("Source code at GitHub", "https://github.com/Piotrekkn/CounterStats");
         about.Present(this);
     }
+
     private void OnPreferencesAction()
     {
         List<string> list = new List<string>();
@@ -88,9 +93,10 @@ public class MainApp : Adw.ApplicationWindow
         {
             list.Add(item.WindowName);
         }
-        PreferencesDialog? preferencesDialog = new PreferencesDialog(this, _configurationManager, list.ToArray());
+        PreferencesDialog? preferencesDialog = new PreferencesDialog(_configurationManager, list.ToArray());
         preferencesDialog.Present(this);
     }
+
     private void OnShutdownApp()
     {
         if (_configurationManager.ClearCacheOnQuit)
@@ -99,6 +105,7 @@ public class MainApp : Adw.ApplicationWindow
         }
         Console.WriteLine("BYE BYE");
     }
+
     private void OnRefreshAction()
     {
         IWindow window = (IWindow)_stack.GetVisibleChild();
@@ -107,6 +114,7 @@ public class MainApp : Adw.ApplicationWindow
             window.Refresh();
         }
     }
+
     public void SetTitle(string title, string subtitle = "")
     {
         _windowTitle.SetTitle(title);
@@ -128,7 +136,7 @@ public class MainApp : Adw.ApplicationWindow
 
     private void ToogleSplitView()
     {
-        if (_splitView.Collapsed == true && this.GetWidth() <= breakpointWidth)
+        if (_splitView.Collapsed == true && (this.GetWidth() <= breakpointWidth || _configurationManager.HideSidebar))
         {
             _splitView.SetShowSidebar(true);
         }

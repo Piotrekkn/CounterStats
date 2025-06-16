@@ -6,11 +6,8 @@ using Newtonsoft.Json.Linq;
 public class InventoryWindow : Gtk.Box, IWindow
 {
     [Gtk.Connect] private readonly Gtk.Scale _scale;
-
     [Gtk.Connect] private readonly Gtk.SearchEntry _searchEntry;
-
     [Gtk.Connect] private readonly Gtk.FlowBox _flowBox;
-
     [Gtk.Connect] private readonly Adw.Spinner _spinner;
     public string WindowName { get; }
     public string IconName { get; }
