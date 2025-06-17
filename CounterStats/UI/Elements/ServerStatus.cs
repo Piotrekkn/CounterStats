@@ -6,6 +6,7 @@ public class ServerStatus : Gtk.Box
     [Gtk.Connect] private readonly Gtk.Label _capLabel;
     [Gtk.Connect] private readonly Gtk.Label _loadLabel;
     [Gtk.Connect] private readonly Gtk.Label _flagLabel;
+    private int flagSize = 78;
     public string Name { get; }
     private ServerStatus(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
@@ -19,12 +20,9 @@ public class ServerStatus : Gtk.Box
         _loadLabel.SetMarkup(ColorLoad(load));
         _capLabel.SetMarkup(ColorCapacity(capacity));
         _flagLabel.SetMarkup(GetFlag(name));
-        string cssData = ".flagLabel { font-size: 78px;}";
-        Gtk.CssProvider cssProvider = new Gtk.CssProvider();
-        cssProvider.LoadFromString(cssData);
+        string cssData = ".flagLabel { font-size: " + flagSize + "px;}";
+        Globals.SetCssData(cssData);
         _flagLabel.AddCssClass("flagLabel");
-        Gdk.Display display = Gdk.Display.GetDefault();
-        Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
     }
     private string ColorLoad(string load)
     {
@@ -43,11 +41,13 @@ public class ServerStatus : Gtk.Box
                 return prefix + load;
         }
     }
+
     private string ColorCapacity(string capacity)
     {
         string prefix = "Capacity: ";
         return prefix + capacity;
     }
+
     private string GetFlag(string serverName)
     {
         switch (serverName)
@@ -69,33 +69,29 @@ public class ServerStatus : Gtk.Box
             case "US California":
                 return "🐻";
             case "US Atlanta":
+            case "US Seattle":
+            case "US Virginia":
+            case "US Chicago":
+            case "US Dallas":
                 return "🇺🇸";
             case "China Guangdong":
+            case "China Pudong":
+            case "China Beijing":
+            case "China Chengdu":
                 return "🇨🇳";
             case "EU Sweden":
                 return "🇸🇪";
             case "Emirates":
                 return "🇦🇪";
-            case "US Seattle":
-                return "🇺🇸";
             case "South Africa":
                 return "🇿🇦";
             case "Brazil":
                 return "🇧🇷";
-            case "US Virginia":
-                return "🇺🇸";
-            case "US Chicago":
-                return "🇺🇸";
             case "Japan":
                 return "🇯🇵";
-            case "China Pudong":
-                return "🇨🇳";
             case "EU Finland":
                 return "🇫🇮";
             case "India Mumbai":
-                return "🇮🇳";
-            case "US Dallas":
-                return "🇺🇸";
             case "India Chennai":
                 return "🇮🇳";
             case "Argentina":
@@ -108,10 +104,6 @@ public class ServerStatus : Gtk.Box
                 return "🇸🇬";
             case "Australia":
                 return "🇦🇺";
-            case "China Beijing":
-                return "🇨🇳";
-            case "China Chengdu":
-                return "🇨🇳";
             default:
                 return serverName;
         }

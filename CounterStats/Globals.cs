@@ -52,5 +52,20 @@ public static class Globals
             return exception.Message;
         }
     }
+    /// <summary>
+    /// Sets string of data as css style and applies it
+    /// </summary>
+    public static void SetCssData(string data, uint priority = 0)
+    {
+        Gtk.CssProvider cssProvider = new Gtk.CssProvider();
+        cssProvider.LoadFromString(data);
+        Gdk.Display display = Gdk.Display.GetDefault();
+        Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, priority);
+    }
 
+    public static bool IsWindows() =>
+       System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+
+    public static bool IsLinux() =>
+        System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux);
 }

@@ -11,9 +11,11 @@ public class MainApp : Adw.ApplicationWindow
     [Gtk.Connect] private readonly Gtk.Stack _stack;
     [Gtk.Connect] private readonly Adw.WindowTitle _windowTitle;
     [Gtk.Connect] private readonly Gtk.Button _showSidebarButton;
+    [Gtk.Connect] private readonly Gtk.Button _refreshButton;
     [Gtk.Connect] private readonly Gtk.ListBox _listView;
     [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;
     [Gtk.Connect] private readonly MenuButton _menuButton;
+    [Gtk.Connect] private readonly MenuButton _menuButtonHeader;
     private ConfigurationManager _configurationManager;
     private List<IWindow> _windowList = new List<IWindow>();
     private int breakpointWidth = 1150;
@@ -30,6 +32,7 @@ public class MainApp : Adw.ApplicationWindow
         application.ActiveWindow.WidthRequest = 940;
         application.OnShutdown += (_, _) => OnShutdownApp();
         _showSidebarButton.OnClicked += (_, _) => ToogleSplitView();
+        _refreshButton.OnClicked += (_, _) => OnRefreshAction();
         //create actions
         CreateAction("About", (_, _) => { OnAboutAction(); });
         CreateAction("Quit", (_, _) => { Application.Quit(); }, ["<Ctrl>Q"]);
@@ -57,20 +60,34 @@ public class MainApp : Adw.ApplicationWindow
         if (_configurationManager.HideSidebar)
         {
             _splitView.SetCollapsed(true);
+            _menuButtonHeader.SetVisible(true);
+            _menuButton.SetVisible(false);
         }
         //break point
         Adw.Breakpoint breakpoint = new Adw.Breakpoint();
         this.AddBreakpoint(breakpoint);
         breakpoint.SetCondition(Adw.BreakpointCondition.Parse("max-width:" + breakpointWidth.ToString()));
-        breakpoint.OnApply += (_, _) => { _splitView.SetCollapsed(true); };
+        breakpoint.OnApply += (_, _) =>
+        {
+            _splitView.SetCollapsed(true);
+            _menuButtonHeader.SetVisible(true);
+            _menuButton.SetVisible(false);
+        };
         breakpoint.OnUnapply += (_, _) =>
         {
             if (!_configurationManager.HideSidebar)
-            { _splitView.SetCollapsed(false); }
+            {
+                _splitView.SetCollapsed(false);
+                _menuButtonHeader.SetVisible(false);
+                _menuButton.SetVisible(true);
+            }
         };
         //theme switcher
-        PopoverMenu a = (PopoverMenu)_menuButton.GetPopover();
-        a.AddChild(new ThemeSelector(_configurationManager), "ThemeSelector");
+        SetTheme();
+        PopoverMenu menuSidebar = (PopoverMenu)_menuButton.GetPopover();
+        PopoverMenu menuHeader = (PopoverMenu)_menuButtonHeader.GetPopover();
+        menuSidebar.AddChild(new ThemeSelector(_configurationManager), "ThemeSelector");
+        menuHeader.AddChild(new ThemeSelector(_configurationManager), "ThemeSelector");
     }
 
     private void OnAboutAction()
@@ -143,6 +160,8 @@ public class MainApp : Adw.ApplicationWindow
         else
         {
             _splitView.SetCollapsed(!_splitView.GetCollapsed());
+            _menuButtonHeader.SetVisible(_splitView.GetCollapsed());
+            _menuButton.SetVisible(!_splitView.GetCollapsed());
         }
     }
 
@@ -174,5 +193,22 @@ public class MainApp : Adw.ApplicationWindow
         }
         _stack.SetFocusChild((Gtk.Widget)_windowList[windowId]);
         _stack.VisibleChild = (Gtk.Widget)_windowList[windowId];
+    }
+
+    private void SetTheme()
+    {
+        switch (_configurationManager.CurrentTheme)
+        {
+            case 1:
+                Adw.StyleManager.GetDefault().SetColorScheme(Adw.ColorScheme.ForceLight);
+                break;
+            case 2:
+                Adw.StyleManager.GetDefault().SetColorScheme(Adw.ColorScheme.ForceDark);
+                break;
+            case 0:
+            default:
+                Adw.StyleManager.GetDefault().SetColorScheme(Adw.ColorScheme.Default);
+                break;
+        }
     }
 }

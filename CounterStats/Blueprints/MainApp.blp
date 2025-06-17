@@ -40,6 +40,7 @@ Adw.ApplicationWindow _root {
           hscrollbar-policy: never;
 
           Gtk.ListBox _listView {
+            margin-end: 1;
             vexpand: true;
             name: "";
 
@@ -64,9 +65,22 @@ Adw.ApplicationWindow _root {
             icon-name: "sidebar-show-symbolic";
           }
 
+          Gtk.Button _refreshButton {
+            icon-name: "view-refresh-symbolic";
+          }
+
           [title]
           Adw.WindowTitle _windowTitle {
             title: "Counter Stats";
+          }
+
+          [end]
+          MenuButton _menuButtonHeader {
+            tooltip-text: _("Main Menu");
+            icon-name: "open-menu-symbolic";
+            menu-model: _primaryMenu;
+            primary: true;
+            visible: false;
           }
         }
 

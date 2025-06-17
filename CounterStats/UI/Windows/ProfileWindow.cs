@@ -1,8 +1,6 @@
 namespace CounterStats.UI.Windows;
 
 using System.Text.RegularExpressions;
-using System.Threading.Tasks.Dataflow;
-using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 public class ProfileWindow : Gtk.Box, IWindow
@@ -84,6 +82,7 @@ public class ProfileWindow : Gtk.Box, IWindow
         }
         GetStatsAsync();
     }
+
     private async Task SetProfileDataAsync()
     {
         //string url = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + _configuration.ApiKey + "&steamids=" + steamProfile;
@@ -92,6 +91,7 @@ public class ProfileWindow : Gtk.Box, IWindow
         SteamProfile steamProfile = new SteamProfile(data);
         SetData(steamProfile);
     }
+
     private async Task GetStatsAsync()
     {
         string url = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=" + _configuration.ApiKey + "&steamid=" + steamProfileID;
@@ -112,7 +112,6 @@ public class ProfileWindow : Gtk.Box, IWindow
             }
             JToken player = obj.SelectToken("$.response").SelectToken("$.profile_background").SelectToken("$.image_large");
             string image = "https://cdn.fastly.steamstatic.com/steamcommunity/public/images/" + player.ToString();
-
             string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/background.jpg";
             if (!System.IO.File.Exists(dir))
             {
@@ -121,11 +120,8 @@ public class ProfileWindow : Gtk.Box, IWindow
                 await System.IO.File.WriteAllBytesAsync(dir, imageBytes);
             }
             string cssData = ".profileWindowBox { background-image: " + "url(\'file://" + dir + "\');\n background-size: cover;}";
-            Gtk.CssProvider cssProvider = new Gtk.CssProvider();
-            cssProvider.LoadFromString(cssData);
+            Globals.SetCssData(cssData);
             AddCssClass("profileWindowBox");
-            Gdk.Display display = Gdk.Display.GetDefault();
-            Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
         }
         else
         {
@@ -147,7 +143,6 @@ public class ProfileWindow : Gtk.Box, IWindow
 
     private void SetData(SteamProfile steamProfile)
     {
-
         _labelName.SetText(steamProfile.Name);
         SetTitle("Your Profile", steamProfile.Name);
 
@@ -224,7 +219,6 @@ public class ProfileWindow : Gtk.Box, IWindow
             int total_kills_headshot = 0;
             foreach (JToken token in stats)
             {
-                //total_kills total_deaths total_time_played total_kills_headshot
                 if (token.SelectToken("$.name").ToString() == "total_kills")
                 {
                     total_kills = Convert.ToInt32(token.SelectToken("$.value"));

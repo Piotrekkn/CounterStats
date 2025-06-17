@@ -35,15 +35,22 @@ internal class Program
                     }
                 }
                 catch (Exception ex)
-                { 
+                {
                     Console.WriteLine(ex.Message);
-                }               
+                }
                 //Add icons
                 var theme = Gtk.IconTheme.GetForDisplay(Gdk.Display.GetDefault());
                 theme.AddResourcePath("/org/counterstats/icons");
                 // Create a new MainApp and show it.
                 // The application is passed to the MainApp so that it can be used
                 var MainApp = new MainApp((Adw.Application)application);
+                //if windows change font size to match default adwaita style
+                if (Globals.IsWindows())
+                {
+                    Gtk.Settings.GetDefault().GtkFontName = "Segoe UI 12";
+                    Gtk.Settings.GetDefault().GtkFontRendering = Gtk.FontRendering.Automatic;
+                    Gtk.Settings.GetDefault().GtkHintFontMetrics = true;
+                }
                 MainApp.Show();
             };
         app.RunWithSynchronizationContext(null);

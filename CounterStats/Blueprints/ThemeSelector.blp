@@ -5,10 +5,10 @@ Box _root {
   orientation: horizontal;
 
   styles [
-    "themeselector",
+    "theme-selector",
   ]
 
-  CheckButton follow {
+  CheckButton _followButton {
     styles [
       "follow",
     ]
@@ -24,14 +24,14 @@ Box _root {
     }
   }
 
-  CheckButton light {
+  CheckButton _lightButton {
     styles [
       "light",
     ]
 
     hexpand: true;
     halign: center;
-    group: follow;
+    group: _followButton;
     focus-on-click: false;
     tooltip-text: _("Light style");
 
@@ -40,14 +40,14 @@ Box _root {
     }
   }
 
-  CheckButton dark {
+  CheckButton _darkButton {
     styles [
       "dark",
     ]
 
     hexpand: true;
     halign: center;
-    group: light;
+    group: _followButton;
     focus-on-click: false;
     tooltip-text: _("Dark style");
   }

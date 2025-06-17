@@ -21,8 +21,6 @@ public class InventoryWindow : Gtk.Box, IWindow
     private int maxSize = 680;
     private int defaultSize = 380;
     MainApp _mainApp;
-    private Gtk.CssProvider cssProvider = new Gtk.CssProvider();
-    private Gdk.Display display = Gdk.Display.GetDefault();
 
     List<ItemBox> itemBoxList = new List<ItemBox>();
 
@@ -59,8 +57,7 @@ public class InventoryWindow : Gtk.Box, IWindow
     private void SetImageSizeValue(int value)
     {
         string cssData = ".imageItemBox { min-height: " + value.ToString() + "px ; min-width: " + value.ToString() + "px ;}";
-        cssProvider.LoadFromString(cssData);
-        Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, 0);
+        Globals.SetCssData(cssData);
     }
 
     private void SetTitle(string title, string subtitle = "")
@@ -101,12 +98,14 @@ public class InventoryWindow : Gtk.Box, IWindow
         SetLoadingScreen();
         SetDataAsync();
     }
+
     private async Task SetDataAsync()
     {
         string url = baseURLstart + _configuration.SteamProfile + baseURLend;
         string data = await Globals.FetchData(url);
         SetData(data);
     }
+
     private void SearchFilter(string search)
     {
         HideChildren();
