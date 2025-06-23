@@ -1,6 +1,6 @@
 using System.Text.Json;
 using CounterStats.UI;
-
+using CounterStats.UI.Elements;
 public class ConfigurationManager
 {
     [Serializable]
@@ -110,7 +110,6 @@ public class ConfigurationManager
         }
     }
     private int itemsNumber;
-
     public bool AutoFetchPrices
     {
         get { return autoFetchPrices; }
@@ -137,7 +136,6 @@ public class ConfigurationManager
         }
     }
     private int currency;
-
     public bool HideSidebar
     {
         get { return hideSidebar; }
@@ -170,6 +168,7 @@ public class ConfigurationManager
     private string configDir =
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
     private string configFile = "data.json";
+    public bool firstRun { get; private set; }
 
     public ConfigurationManager(MainApp mainApp)
     {
@@ -208,6 +207,7 @@ public class ConfigurationManager
         }
         if (jsonData != null)
         {
+            firstRun = false;
             Data data = JsonSerializer.Deserialize<Data>(jsonData);
             UseMarkup = data.UseMarkup;
             ApiKey = data.ApiKey;
@@ -223,15 +223,19 @@ public class ConfigurationManager
         }
         else
         {
+            firstRun = true;
             NewData();
         }
     }
 
     private void NewData()
     {
-        ApiKey = "";
+        FirstTimeSetup();
+        if (string.IsNullOrEmpty(ApiKey))
+            ApiKey = "";
         UseMarkup = true;
-        SteamProfile = "";
+        if (string.IsNullOrEmpty(SteamProfile))
+            SteamProfile = "";
         UpdatesNumber = 20;
         ClearCacheOnQuit = false;
         DefaultWindow = 0;
@@ -240,6 +244,18 @@ public class ConfigurationManager
         Currency = 0;
         HideSidebar = false;
         CurrentTheme = 0;
+    }
+
+    private void FirstTimeSetup()
+    {
+        SetupDialog setup = new SetupDialog(this);
+        setup.Present(_mainApp);
+        setup.OnClosed += (_, _) =>
+        {
+            firstRun = false;
+            //setdata
+            _mainApp.ReloadWindow();
+        };
     }
 
     public void ClearCache()

@@ -19,17 +19,21 @@ public class MainApp : Adw.ApplicationWindow
     private ConfigurationManager _configurationManager;
     private List<IWindow> _windowList = new List<IWindow>();
     private int breakpointWidth = 1150;
+    private int defaultWidth = 940;
+    private int defaultHeight = 600;
 
     private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), true))
     {
         builder.Connect(this);
         Console.WriteLine(builder.GetPointer(name).ToString());
     }
+
     public MainApp(Adw.Application application) : this(new Gtk.Builder("MainApp.ui"), "_root")
     {
         Application = application;
         _configurationManager = new ConfigurationManager(this);
-        application.ActiveWindow.WidthRequest = 940;
+        application.ActiveWindow.WidthRequest = defaultWidth;
+        application.ActiveWindow.HeightRequest = defaultHeight;
         application.OnShutdown += (_, _) => OnShutdownApp();
         _showSidebarButton.OnClicked += (_, _) => ToogleSplitView();
         _refreshButton.OnClicked += (_, _) => OnRefreshAction();
@@ -38,24 +42,28 @@ public class MainApp : Adw.ApplicationWindow
         CreateAction("Quit", (_, _) => { Application.Quit(); }, ["<Ctrl>Q"]);
         CreateAction("Preferences", (_, _) => { OnPreferencesAction(); }, ["<Ctrl>comma"]);
         CreateAction("Refresh", (_, _) => { OnRefreshAction(); }, ["<Ctrl>R"]);
-        //windows        
+        //windows
         _windowList.Add(new ProfileWindow(this, _configurationManager, "Your Profile", "avatar-default-symbolic"));
         _windowList.Add(new UpdatesWindow(this, _configurationManager, "Game Updates", "software-update-available-symbolic"));
         _windowList.Add(new InventoryWindow(this, _configurationManager, "Inventory", "package-x-generic-symbolic"));
         _windowList.Add(new LeaderboardWindow(this, "Leaderboards", "applications-games-symbolic"));
         _windowList.Add(new StatsWindow(this, _configurationManager, "Player Statistics", "view-list-symbolic"));
         _windowList.Add(new StatusWindow(this, _configurationManager, "Server Status", "network-workgroup-symbolic"));
-
         //add windows to stack and sidebar
         for (int i = 0; i < _windowList.Count; i++)
-        { //stack
+        {   //stack
             _stack.AddChild((Gtk.Widget)_windowList[i]);
-            //sidebar
+            //sidebar          
             SidebarBoxRow sidebarBoxRow = new SidebarBoxRow(this, _windowList[i].WindowName, _windowList[i].IconName, i);
             _listView.Append(sidebarBoxRow);
         }
-        SetWindow(_configurationManager.DefaultWindow);
         _listView.SelectRow(GetListBoxRowByID(_configurationManager.DefaultWindow));
+        SetWindow(_configurationManager.DefaultWindow);
+        if (_configurationManager.firstRun)
+        {
+            _stack.SetVisible(false);
+            SetTitle("", "");
+        }
         //Sidebar
         if (_configurationManager.HideSidebar)
         {
@@ -123,6 +131,12 @@ public class MainApp : Adw.ApplicationWindow
         Console.WriteLine("BYE BYE");
     }
 
+    public void ReloadWindow()
+    {
+        _stack.SetVisible(true);
+        OnRefreshAction();
+    }
+
     private void OnRefreshAction()
     {
         IWindow window = (IWindow)_stack.GetVisibleChild();
@@ -144,7 +158,6 @@ public class MainApp : Adw.ApplicationWindow
         var actionItem = SimpleAction.New(lowerName, null);
         actionItem.OnActivate += callback;
         Application.AddAction(actionItem);
-
         if (shortcuts is { Length: > 0 })
         {
             Application.SetAccelsForAction($"app.{lowerName}", shortcuts);

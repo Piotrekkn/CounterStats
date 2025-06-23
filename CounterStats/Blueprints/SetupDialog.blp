@@ -1,0 +1,211 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Dialog _root {
+  width-request: 410;
+  content-width: 390;
+  title: _("Welcome!");
+
+  [child]
+  Adw.ToolbarView _toolbarview {
+    [top]
+    Adw.HeaderBar _headerbar {}
+
+    Adw.Carousel _carousel {
+      margin-start: 18;
+      margin-end: 18;
+      margin-top: 12;
+      margin-bottom: 12;
+      interactive: false;
+      // Welcome Page
+      Adw.StatusPage {
+        icon-name: 'org.counterstats.CounterStats';
+        title: "Welcome to Counter Stats!";
+        description: _("Let's setup all the necessary settings needed to run Counter Stats!\n\nYou can skip the setup but most features won't be available!");
+        hexpand: true;
+
+        Gtk.Box {
+          halign: center;
+          orientation: vertical;
+          spacing: 20;
+
+          Gtk.Button _welcomePageButtonSkip {
+            halign: center;
+            label: _("Skip");
+            hexpand: true;
+            width-request: 100;
+
+            styles [
+              "pill",
+              "flat",
+            ]
+          }
+
+          Gtk.Button _welcomePageButton {
+            halign: center;
+            label: _("Start!");
+            hexpand: true;
+            width-request: 250;
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+        }
+      }
+
+      // THEME PAGE
+      Adw.StatusPage _themePage {
+        valign: start;
+        margin-start: 12;
+        margin-end: 12;
+        title: "Setup Theme";
+
+        Gtk.Box {
+          halign: center;
+          orientation: vertical;
+          spacing: 20;
+
+          Gtk.Box _themePageBox {
+            halign: center;
+            hexpand: true;
+            vexpand: true;
+            width-request: 350;
+            orientation: vertical;
+          }
+
+          Gtk.Label _themePageLabel {
+            halign: center;
+            label: _("");
+
+            styles [
+              "title-3",
+            ]
+          }
+
+          Gtk.Button _themePageButtonBack {
+            margin-top: 50;
+            halign: center;
+            label: _("Go Back");
+            hexpand: true;
+            width-request: 250;
+
+            styles [
+              "pill",
+              "regular",
+            ]
+          }
+
+          Gtk.Button _themePageButton {
+            halign: center;
+            label: _("Next");
+            hexpand: true;
+            width-request: 250;
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+        }
+      }
+
+      // PROFILE PAGE
+      Adw.StatusPage _profilePage {
+        valign: start;
+        margin-start: 12;
+        margin-end: 12;
+        title: "Setup Profile";
+
+        Gtk.Box {
+          halign: center;
+          orientation: vertical;
+          spacing: 20;
+
+          Gtk.Label {
+            label: _("Steam profile:");
+            halign: start;
+
+            styles [
+              "regular",
+              "pill",
+            ]
+          }
+
+          Gtk.Entry _profilePageEntry {
+            styles [
+              "error",
+              "pill",
+            ]
+          }
+
+          Gtk.Label {
+            label: _("Api:");
+            halign: start;
+
+            styles [
+              "regular",
+              "pill",
+            ]
+          }
+
+          Gtk.Entry _profilePageApiEntry {
+            styles [
+              "error",
+              "pill",
+            ]
+          }
+
+          Gtk.Button _profilePageButtonBack {
+            margin-top: 50;
+            halign: center;
+            label: _("Go Back");
+            hexpand: true;
+            width-request: 250;
+
+            styles [
+              "pill",
+              "regular",
+            ]
+          }
+
+          Gtk.Button _profilePageButton {
+            halign: center;
+            label: _("Next");
+            hexpand: true;
+            width-request: 250;
+            sensitive: false;
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+        }
+      }
+
+      // FINNISH
+      Adw.StatusPage _finnishPage {
+        valign: start;
+        margin-start: 12;
+        margin-end: 12;
+        title: "Success!";
+        icon-name: 'object-select-symbolic';
+        description: _("Time to Counter Stats.");
+
+        Gtk.Button _finnishPageButton {
+          halign: center;
+          label: _("Let's roll-oll!");
+          hexpand: true;
+          width-request: 250;
+
+          styles [
+            "pill",
+            "suggested-action",
+          ]
+        }
+      }
+    }
+  }
+}

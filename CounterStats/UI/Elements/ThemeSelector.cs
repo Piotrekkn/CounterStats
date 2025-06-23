@@ -6,17 +6,14 @@ namespace CounterStats.UI.Elements;
 public class ThemeSelector : Adw.Bin
 {
   private string css =
-      @"
-.theme-selector checkbutton {
-   min-height: 44px;
+@".theme-selector checkbutton {
+  min-height: 44px;
   min-width: 44px; 
   background-clip: content-box;
   border-radius: 9999px;
   box-shadow: inset 0 0 0 1px @borders;
 }
-.theme-selector checkbutton.follow:checked,
-.theme-selector checkbutton.light:checked,
-.theme-selector checkbutton.dark:checked {
+.theme-selector checkbutton:checked {
   box-shadow: inset 0 0 0 2px @theme_selected_bg_color;
 }
 .theme-selector checkbutton.follow {
@@ -29,7 +26,8 @@ public class ThemeSelector : Adw.Bin
 .theme-selector checkbutton.light {
   background-color: #fff;
 }
-.theme-selector checkbutton.dark { background-color: #202020;
+.theme-selector checkbutton.dark { 
+background-color: #202020;
 }
 .theme-selector radio{
    -gtk-icon-source: none;
@@ -44,8 +42,23 @@ public class ThemeSelector : Adw.Bin
 .theme-selector radio:checked { 
   -gtk-icon-source: -gtk-icontheme('object-select-symbolic');
   background-color: @theme_selected_bg_color;
-   color: var(--accent-fg-color);}
-  ";
+   color: var(--accent-fg-color);
+   }
+   .big-theme checkbutton {
+  min-height: 88px;
+  min-width: 88px; 
+  box-shadow: inset 0 0 0 4px @borders;
+}
+.big-theme radio{
+  min-width: 24px;
+  min-height: 24px;
+  transform: translate(54px, 28px);
+  padding: 8px;
+  }
+  .big-theme  checkbutton:checked {
+  box-shadow: inset 0 0 0 4px @theme_selected_bg_color;
+  }
+   ";
   [Gtk.Connect] private readonly Gtk.CheckButton _followButton;
   [Gtk.Connect] private readonly Gtk.CheckButton _darkButton;
   [Gtk.Connect] private readonly Gtk.CheckButton _lightButton;
@@ -59,18 +72,18 @@ public class ThemeSelector : Adw.Bin
   public ThemeSelector(ConfigurationManager configurationManager) : this(new Gtk.Builder("ThemeSelector.ui"), "_root")
   {
     _configurationManager = configurationManager;
-    //// SetTheme(configurationManager.CurrentTheme, true);
     _darkButton.OnToggled += (_, _) => { SetTheme(2); };
     _lightButton.OnToggled += (_, _) => { SetTheme(1); };
     _followButton.OnToggled += (_, _) => { SetTheme(); };
     Globals.SetCssData(css, 1001010);
-    OnMap += (_, _) => { Console.WriteLine("DSFDDFS " + _configurationManager.CurrentTheme, true); Refresh(); };
+    OnMap += (_, _) => { Refresh(); };
   }
 
   private void Refresh()
   {
     SetTheme(_configurationManager.CurrentTheme, true);
   }
+
   private void SetTheme(int theme = 0, bool firstRun = false)
   {
     if (!firstRun && _configurationManager.CurrentTheme == theme)
@@ -102,6 +115,5 @@ public class ThemeSelector : Adw.Bin
         _followButton.SetActive(true);
         break;
     }
-
   }
 }

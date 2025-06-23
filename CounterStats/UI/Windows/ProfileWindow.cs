@@ -1,6 +1,7 @@
 namespace CounterStats.UI.Windows;
 
 using System.Text.RegularExpressions;
+using HarfBuzz.Internal;
 using Newtonsoft.Json.Linq;
 
 public class ProfileWindow : Gtk.Box, IWindow
@@ -68,6 +69,10 @@ public class ProfileWindow : Gtk.Box, IWindow
     public void Refresh()
     {
         _banner.SetRevealed(false);
+        if (String.IsNullOrEmpty(steamProfileID))
+        {
+            steamProfileID = _configuration.SteamProfile;
+        }
         if (String.IsNullOrEmpty(steamProfileID))
         {
             SetBanner("Steam Profile ID is empty, make sure to set it in the prefrences");

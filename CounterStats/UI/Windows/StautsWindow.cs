@@ -19,7 +19,7 @@ public class StatusWindow : Gtk.Box, IWindow
     public string WindowName { get; }
     public string IconName { get; }
     private string url = "https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1?key=";
-    private string apiKey = "";
+    ConfigurationManager _configuration;
     private StatusWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
@@ -31,7 +31,7 @@ public class StatusWindow : Gtk.Box, IWindow
         OnRealize += (sender, e) => Refresh();
         WindowName = windowName;
         IconName = iconName;
-        apiKey = configuration.ApiKey;
+        _configuration = configuration;
     }
 
     public void CleanChildren()
@@ -64,7 +64,7 @@ public class StatusWindow : Gtk.Box, IWindow
 
     private async Task SetDataAsync()
     {
-        string fetchURL = url + apiKey;
+        string fetchURL = url + _configuration.ApiKey;
         string data = await Globals.FetchData(fetchURL);
         SetData(data);
     }
