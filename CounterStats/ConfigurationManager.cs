@@ -246,7 +246,7 @@ public class ConfigurationManager
         CurrentTheme = 0;
     }
 
-    private void FirstTimeSetup()
+    public void FirstTimeSetup()
     {
         SetupDialog setup = new SetupDialog(this);
         setup.Present(_mainApp);

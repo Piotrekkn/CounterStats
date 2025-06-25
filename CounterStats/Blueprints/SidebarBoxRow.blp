@@ -8,12 +8,20 @@ Gtk.ListBoxRow _root {
         "navigation-sidebar",
     ]
 
+    [child]
     Gtk.Box {
+        spacing: 12;
+        halign: fill;
+        valign: fill;
+        hexpand: true;
+        margin-bottom: 10;
+        margin-top: 10;
+        margin-end: 6;
         margin-start: 6;
+        orientation: horizontal;
 
         Gtk.Image _icon {
             icon-name: "";
-            margin-end: 8;
         }
 
         Gtk.Label _titleLabel {

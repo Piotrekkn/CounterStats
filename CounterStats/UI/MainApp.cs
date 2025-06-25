@@ -22,6 +22,8 @@ public class MainApp : Adw.ApplicationWindow
     private int defaultWidth = 940;
     private int defaultHeight = 600;
 
+    private int[] separatorPositions = new int[] { 6, };
+
     private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), true))
     {
         builder.Connect(this);
@@ -49,7 +51,10 @@ public class MainApp : Adw.ApplicationWindow
         _windowList.Add(new LeaderboardWindow(this, "Leaderboards", "applications-games-symbolic"));
         _windowList.Add(new StatsWindow(this, _configurationManager, "Player Statistics", "view-list-symbolic"));
         _windowList.Add(new StatusWindow(this, _configurationManager, "Server Status", "network-workgroup-symbolic"));
-        //add windows to stack and sidebar
+        _windowList.Add(new FindPlayerWindow(this, _configurationManager, "Find Player", "edit-find-symbolic"));
+        //separators in sidebar
+        _listView.SetHeaderFunc((row, _) => SetSeparator(row));
+        //add windows to stack and sidebar     
         for (int i = 0; i < _windowList.Count; i++)
         {   //stack
             _stack.AddChild((Gtk.Widget)_windowList[i]);
@@ -175,6 +180,20 @@ public class MainApp : Adw.ApplicationWindow
             _splitView.SetCollapsed(!_splitView.GetCollapsed());
             _menuButtonHeader.SetVisible(_splitView.GetCollapsed());
             _menuButton.SetVisible(!_splitView.GetCollapsed());
+        }
+    }
+
+    private void SetSeparator(ListBoxRow row)
+    {
+        foreach (int i in separatorPositions)
+        {
+            if (row.GetIndex() == i)
+            {
+                var separator = Gtk.Separator.New(Gtk.Orientation.Horizontal);
+                separator.AddCssClass("separator");
+                row.SetHeader(separator);
+                return;
+            }
         }
     }
 

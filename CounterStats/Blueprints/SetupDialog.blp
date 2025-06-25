@@ -4,12 +4,27 @@ using Adw 1;
 Adw.Dialog _root {
   width-request: 410;
   content-width: 390;
-  title: _("Welcome!");
 
   [child]
   Adw.ToolbarView _toolbarview {
     [top]
-    Adw.HeaderBar _headerbar {}
+    Adw.HeaderBar _headerbar {
+      [title]
+      Gtk.Box {
+        Adw.CarouselIndicatorDots _titleDots {
+          carousel: _carousel;
+          halign: center;
+          hexpand: true;
+          valign: center;
+          vexpand: true;
+          visible: false;
+        }
+
+        Adw.WindowTitle _windowTitle {
+          title: "Welcome!";
+        }
+      }
+    }
 
     Adw.Carousel _carousel {
       margin-start: 18;
@@ -19,10 +34,16 @@ Adw.Dialog _root {
       interactive: false;
       // Welcome Page
       Adw.StatusPage {
+        valign: start;
+        margin-start: 12;
+        margin-end: 12;
         icon-name: 'org.counterstats.CounterStats';
         title: "Welcome to Counter Stats!";
         description: _("Let's setup all the necessary settings needed to run Counter Stats!\n\nYou can skip the setup but most features won't be available!");
         hexpand: true;
+        vexpand: true;
+        width-request: 450;
+        height-request: 650;
 
         Gtk.Box {
           halign: center;
@@ -61,9 +82,15 @@ Adw.Dialog _root {
         margin-start: 12;
         margin-end: 12;
         title: "Setup Theme";
+        hexpand: true;
+        vexpand: true;
+        width-request: 450;
+        height-request: 650;
 
         Gtk.Box {
           halign: center;
+          hexpand: true;
+          vexpand: true;
           orientation: vertical;
           spacing: 20;
 
@@ -117,51 +144,95 @@ Adw.Dialog _root {
         margin-start: 12;
         margin-end: 12;
         title: "Setup Profile";
+        hexpand: true;
+        vexpand: true;
+        width-request: 450;
+        height-request: 650;
 
         Gtk.Box {
           halign: center;
+          hexpand: true;
+          vexpand: true;
           orientation: vertical;
           spacing: 20;
 
-          Gtk.Label {
-            label: _("Steam profile:");
-            halign: start;
+          Gtk.Box _profileBox {
+            halign: center;
+            orientation: vertical;
+            spacing: 20;
+            valign: end;
+            width-request: 350;
+            height-request: 180;
 
-            styles [
-              "regular",
-              "pill",
-            ]
+            Gtk.Label {
+              label: _("Steam profile:");
+              halign: start;
+
+              styles [
+                "regular",
+                "pill",
+              ]
+            }
+
+            Gtk.Entry _profilePageEntry {
+              width-request: 250;
+
+              styles [
+                "error",
+                "pill",
+              ]
+            }
+
+            Gtk.Label {
+              label: _("Api:");
+              halign: start;
+
+              styles [
+                "regular",
+                "pill",
+              ]
+            }
+
+            Gtk.Entry _profilePageApiEntry {
+              width-request: 250;
+
+              styles [
+                "error",
+                "pill",
+              ]
+            }
           }
 
-          Gtk.Entry _profilePageEntry {
-            styles [
-              "error",
-              "pill",
-            ]
+          Gtk.Box _profileSkipBox {
+            halign: center;
+            hexpand: true;
+            vexpand: true;
+            orientation: vertical;
+            spacing: 20;
+            valign: end;
+            visible: false;
+            width-request: 350;
+            height-request: 180;
+
+            Gtk.Label {
+              label: _("Warning:\nSteam api key is needed for the most feautures.");
+              halign: start;
+
+              styles [
+                "warning",
+              ]
+            }
           }
 
-          Gtk.Label {
-            label: _("Api:");
-            halign: start;
-
-            styles [
-              "regular",
-              "pill",
-            ]
-          }
-
-          Gtk.Entry _profilePageApiEntry {
-            styles [
-              "error",
-              "pill",
-            ]
+          Gtk.CheckButton _profileCheck {
+            margin-top: 40;
+            label: _("Skip the step for now");
           }
 
           Gtk.Button _profilePageButtonBack {
-            margin-top: 50;
             halign: center;
+            valign: end;
             label: _("Go Back");
-            hexpand: true;
             width-request: 250;
 
             styles [
@@ -173,9 +244,95 @@ Adw.Dialog _root {
           Gtk.Button _profilePageButton {
             halign: center;
             label: _("Next");
-            hexpand: true;
+            valign: end;
             width-request: 250;
             sensitive: false;
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+
+          Gtk.Button _profilePageButtonSkip {
+            halign: center;
+            label: _("Skip step");
+            valign: end;
+            width-request: 250;
+            visible: false;
+
+            styles [
+              "pill",
+            ]
+          }
+        }
+      }
+
+      // rest
+      Adw.StatusPage _miscPage {
+        valign: start;
+        margin-start: 12;
+        margin-end: 12;
+        title: "Aditional Settings";
+        hexpand: true;
+        vexpand: true;
+        width-request: 450;
+        height-request: 650;
+
+        Gtk.Box {
+          halign: center;
+          hexpand: true;
+          vexpand: true;
+          orientation: vertical;
+          spacing: 20;
+          valign: end;
+
+          Gtk.Box {
+            hexpand: true;
+            halign: center;
+            width-request: 300;
+
+            Gtk.Label {
+              label: _("Currency:");
+              halign: start;
+              hexpand: true;
+
+              styles [
+                "regular",
+              ]
+            }
+
+            Gtk.DropDown _miscPagecurrencyDropdown {
+              hexpand: true;
+            }
+          }
+
+          Gtk.Box {
+            hexpand: true;
+            halign: center;
+            width-request: 300;
+
+            Gtk.Label {
+              hexpand: true;
+              label: _("Hide sidebar:");
+              halign: start;
+
+              styles [
+                "regular",
+              ]
+            }
+
+            Gtk.Switch _miscSidebarSwitch {
+              hexpand: true;
+              halign: end;
+            }
+          }
+
+          Gtk.Button _miscPageButton {
+            halign: center;
+            label: _("Next");
+            hexpand: true;
+            width-request: 250;
 
             styles [
               "pill",
@@ -193,6 +350,10 @@ Adw.Dialog _root {
         title: "Success!";
         icon-name: 'object-select-symbolic';
         description: _("Time to Counter Stats.");
+        hexpand: true;
+        vexpand: true;
+        width-request: 450;
+        height-request: 650;
 
         Gtk.Button _finnishPageButton {
           halign: center;

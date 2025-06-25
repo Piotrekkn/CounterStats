@@ -1,11 +1,10 @@
-using HarfBuzz;
-
 namespace CounterStats.UI.Elements;
 
 public class SidebarBoxRow : Gtk.ListBoxRow
 {
     [Gtk.Connect] private readonly Gtk.Label _titleLabel;
     [Gtk.Connect] private readonly Gtk.Image _icon;
+    [Gtk.Connect] private readonly Gtk.ListBoxRow _root;
     private SidebarBoxRow(Gtk.Builder builder, string name) : base(new Gtk.Internal.ListBoxRowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);

@@ -1,0 +1,35 @@
+using Gtk 4.0;
+using Adw 1;
+
+Gtk.Box _root {
+    vexpand: false;
+    hexpand: false;
+
+    Adw.StatusPage {
+        title: "Find player";
+        icon-name: "edit-find-symbolic";
+
+        Gtk.Box {
+            halign: center;
+            orientation: vertical;
+            spacing: 20;
+
+            Gtk.Box _themePageBox {
+                halign: center;
+                hexpand: true;
+                vexpand: true;
+                width-request: 350;
+                orientation: vertical;
+            }
+
+            Gtk.Label _themePageLabel {
+                halign: center;
+                label: _("");
+
+                styles [
+                    "title-3",
+                ]
+            }
+        }
+    }
+}

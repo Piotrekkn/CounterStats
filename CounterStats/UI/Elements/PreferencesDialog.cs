@@ -19,6 +19,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.SwitchRow _inventoryAutoPriceSwitchRow;
     [Gtk.Connect] private readonly Adw.PreferencesPage _apiPage;
     [Gtk.Connect] private readonly Adw.ComboRow _currencyComboRow;
+    [Gtk.Connect] private readonly Adw.ButtonRow _setupButton;
     private ConfigurationManager _configuration;
 
     private PreferencesDialog(Gtk.Builder builder, string name) : base(new Adw.Internal.PreferencesDialogHandle(builder.GetPointer(name), false))
@@ -50,6 +51,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
         //buttons
         _clearCacheButton.OnActivated += (_, _) => configuration.ClearCache();
         _clearDataButton.OnActivated += (_, _) => configuration.ClearData();
+        _setupButton.OnActivated += (_, _) => { this.Close(); configuration.FirstTimeSetup(); };
         //default window combo row
         _windowComboRow.OnRealize += (_, _) => { PopulateWindowRow(windowList, configuration.DefaultWindow); };
         _windowComboRow.OnNotify += (_, _) => { configuration.DefaultWindow = (int)_windowComboRow.GetSelected(); };

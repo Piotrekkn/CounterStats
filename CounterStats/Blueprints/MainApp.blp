@@ -40,7 +40,6 @@ Adw.ApplicationWindow _root {
           hscrollbar-policy: never;
 
           Gtk.ListBox _listView {
-            margin-end: 1;
             vexpand: true;
             name: "";
 
@@ -84,21 +83,9 @@ Adw.ApplicationWindow _root {
           }
         }
 
-        WindowHandle {
-          Box window {
-            hexpand: true;
-            vexpand: true;
-
-            WindowHandle {
-              hexpand: true;
-              vexpand: true;
-
-              Stack _stack {
-                hexpand: true;
-                vexpand: true;
-              }
-            }
-          }
+        Stack _stack {
+          hexpand: true;
+          vexpand: true;
         }
       };
     }
