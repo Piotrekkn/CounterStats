@@ -5,10 +5,10 @@
 
 
 ## Gallery
-|![Game Updates](screenshots/1.png)|![Profile](screenshots/2.png)|![leaderboards](screenshots/3.png)|
+|![Profile](screenshots/1.png)Profile|![ServerStatus](screenshots/2.png)Server status|![inventory](screenshots/3.png)Inventory|
 |--------------------|--------------------|--------------------|
-|![Statistics](screenshots/4.png)|![preferences](screenshots/5.png)|![Inventory](screenshots/6.png)|
-|![InventoryWindows](screenshots/7.png)|![gameUpdates win](screenshots/8.png)|![leaderboards win](screenshots/9.png)|
+|![preferences](screenshots/4.png)Preferences|![leaderboards](screenshots/5.png)Leaderboards|![ThemeChooser](screenshots/6.png)Initial setup Themepicker|
+|![statisticsWindows](screenshots/7.png)Statistics (Windows)|![inentoryWindows](screenshots/8.png)Inventory (Windows)|![gameUpdates](screenshots/9.png)Game Updates (Windows)|
 
 
 ## Build
