@@ -1,4 +1,5 @@
-using HarfBuzz;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace CounterStats;
 
@@ -61,6 +62,30 @@ public static class Globals
         cssProvider.LoadFromString(data);
         Gdk.Display display = Gdk.Display.GetDefault();
         Gtk.StyleContext.AddProviderForDisplay(display, cssProvider, priority);
+    }
+
+    public static async Task<string> GetSteamID64(string steamProfile, string apiKey = "")
+    {
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            return steamProfile;
+        }
+        string url = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=" + apiKey + "&vanityurl=" + steamProfile;
+        string data = await FetchData(url);
+        if (data.Contains("\"success\":42"))
+        {
+            return steamProfile;
+        }
+        else if (data.Contains("steamid"))
+        {
+            JObject obj = JObject.Parse(data);
+            string steamId = (string)obj["response"]?["steamid"];
+            return steamId;
+        }
+        else
+        {
+            return steamProfile;
+        }
     }
 
     public static bool IsWindows() =>

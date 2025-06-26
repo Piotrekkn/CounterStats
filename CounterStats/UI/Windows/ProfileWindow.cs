@@ -118,7 +118,7 @@ public class ProfileWindow : Gtk.Box, IWindow
             JToken player = obj.SelectToken("$.response").SelectToken("$.profile_background").SelectToken("$.image_large");
             string image = "https://cdn.fastly.steamstatic.com/steamcommunity/public/images/" + player.ToString();
             string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/background.jpg";
-            if (!System.IO.File.Exists(dir))
+            if (!System.IO.File.Exists(dir) || !string.IsNullOrEmpty(steamProfileID))
             {
                 using var client2 = new HttpClient();
                 byte[] imageBytes = await client2.GetByteArrayAsync(image);
@@ -188,7 +188,7 @@ public class ProfileWindow : Gtk.Box, IWindow
     private async void SetAvatar(string url)
     {
         string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/avatar.jpg";
-        if (!System.IO.File.Exists(dir))
+        if (!System.IO.File.Exists(dir) || !string.IsNullOrEmpty(steamProfileID))
         {
             using var client = new HttpClient();
             byte[] imageBytes = await client.GetByteArrayAsync(url);

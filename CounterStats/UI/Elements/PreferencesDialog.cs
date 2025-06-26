@@ -1,5 +1,6 @@
 using CounterStats.Enums;
 using Gio;
+using GLib.Internal;
 
 namespace CounterStats.UI.Elements;
 
@@ -37,7 +38,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
         _apiActionRow.SetSubtitle("You can obtain your steam web api key at: <a href='https://steamcommunity.com/dev/apikey'>steamcommunity.com/dev/apikey</a>");
         //steam profile id entry
         _steamProfileEntryRow.SetText(configuration.SteamProfile);
-        _steamProfileEntryRow.OnNotify += (_, _) => { configuration.SteamProfile = _steamProfileEntryRow.GetText(); SetApiIcon(); };
+        _steamProfileEntryRow.OnStateFlagsChanged += (_, _) => { SetProfileDataAsync(); };
         //number of updates
         _updatesNumberSpinRow.SetAdjustment(Gtk.Adjustment.New(20, 1, 50, 1, 5, 0));
         _updatesNumberSpinRow.SetValue(configuration.UpdatesNumber);
@@ -106,5 +107,11 @@ public class PreferencesDialog : Adw.PreferencesDialog
         _currencyComboRow.SetModel(stringList);
         _currencyComboRow.SetSelected((uint)_configuration.Currency);
         _currencyComboRow.OnNotify += (_, _) => { _configuration.Currency = (int)_currencyComboRow.GetSelected(); };
+    }
+    private async System.Threading.Tasks.Task SetProfileDataAsync()
+    {
+        string data = await Globals.GetSteamID64(_steamProfileEntryRow.GetText(), _configuration.ApiKey);
+        _configuration.SteamProfile = data;
+        SetApiIcon();
     }
 }

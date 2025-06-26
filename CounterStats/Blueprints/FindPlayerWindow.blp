@@ -5,7 +5,7 @@ Gtk.Box _root {
     vexpand: false;
     hexpand: false;
 
-    Adw.StatusPage {
+    Adw.StatusPage _findPlayerStatus {
         title: "Find player";
         icon-name: "edit-find-symbolic";
 
@@ -14,22 +14,39 @@ Gtk.Box _root {
             orientation: vertical;
             spacing: 20;
 
-            Gtk.Box _themePageBox {
+            Gtk.Box {
                 halign: center;
                 hexpand: true;
                 vexpand: true;
-                width-request: 350;
-                orientation: vertical;
-            }
+                width-request: 400;
+                orientation: horizontal;
 
-            Gtk.Label _themePageLabel {
-                halign: center;
-                label: _("");
+                Gtk.Entry _profileEntry {
+                    hexpand: true;
 
-                styles [
-                    "title-3",
-                ]
+                    styles [
+                        "title-3",
+                    ]
+                }
+
+                Gtk.Button _finnishPageButton {
+                    halign: end;
+                    label: _("Go!");
+                    margin-start: 30;
+                    width-request: 100;
+
+                    styles [
+                        "pill",
+                        "suggested-action",
+                    ]
+                }
             }
         }
+    }
+
+    Gtk.Box _profileBox {
+        hexpand: true;
+        vexpand: true;
+        visible: false;
     }
 }

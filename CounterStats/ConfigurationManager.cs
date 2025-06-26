@@ -1,3 +1,6 @@
+namespace CounterStats;
+
+using System.Runtime.ConstrainedExecution;
 using System.Text.Json;
 using CounterStats.UI;
 using CounterStats.UI.Elements;

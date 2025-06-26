@@ -50,7 +50,7 @@ public class SetupDialog : Adw.Dialog
         Adw.StyleManager.GetDefault().OnNotify += (_, _) => SetThemeLabel();
         SetThemeLabel();
         //profile page
-        _profilePageButton.OnClicked += (_, _) => { SetProfileData(); MoveToNextPage(); };
+        _profilePageButton.OnClicked += (_, _) => { SetProfileDataAsync(); MoveToNextPage(); };
         _profilePageButtonSkip.OnClicked += (_, _) => { MoveToNextPage(); };
         _profilePageButtonBack.OnClicked += (_, _) => MoveToPrevPage();
         _profilePage.SetDescription(profileDesc);
@@ -171,11 +171,13 @@ public class SetupDialog : Adw.Dialog
         }
     }
 
-    private void SetProfileData()
+    private async Task SetProfileDataAsync()
     {
-        _configuration.SteamProfile = profilePage;
         _configuration.ApiKey = apiKey;
+        string data = await Globals.GetSteamID64(profilePage, apiKey);
+        _configuration.SteamProfile = data;
     }
+
     private void PopulateCurrencyRow()
     {
         Gtk.StringList stringList = new Gtk.StringList();
