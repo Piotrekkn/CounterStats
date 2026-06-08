@@ -53,16 +53,21 @@ public class ServerStatus : Gtk.Box
         switch (serverName)
         {
             case "EU Poland":
+            case "EU Warsaw":
                 return "🇵🇱";
             case "Peru":
                 return "🇵🇪";
             case "EU Austria":
+            case "EU Vienna":
+            case "EU Falkenstein":
                 return "🇦🇹";
             case "EU Germany":
+            case "EU Frankfurt":
                 return "🇩🇪";
             case "Hong Kong":
                 return "🇭🇰";
             case "EU Spain":
+            case "EU Madrid":
                 return "🇪🇸";
             case "Chile":
                 return "🇨🇱";
@@ -80,6 +85,7 @@ public class ServerStatus : Gtk.Box
             case "China Chengdu":
                 return "🇨🇳";
             case "EU Sweden":
+            case "EU Stockholm":
                 return "🇸🇪";
             case "Emirates":
                 return "🇦🇪";
@@ -90,6 +96,7 @@ public class ServerStatus : Gtk.Box
             case "Japan":
                 return "🇯🇵";
             case "EU Finland":
+            case "EU Helsinki":
                 return "🇫🇮";
             case "India Mumbai":
             case "India Chennai":

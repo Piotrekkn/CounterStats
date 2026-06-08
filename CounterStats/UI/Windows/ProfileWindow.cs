@@ -242,8 +242,8 @@ public class ProfileWindow : Gtk.Box, IWindow
                 }
             }
             _timeLabelValue.SetLabel(((int)total_time_played / 60 / 60).ToString() + "h");
-            _hsLabelValue.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.###") + "%");
-            _ratioLabelValue.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.###"));
+            _hsLabelValue.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.#####") + "%");
+            _ratioLabelValue.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.######"));
         }
     }
 }

@@ -55,7 +55,6 @@ public class ItemBox : Gtk.Box
         {
             SetItemPrice(marketHashName);
         }
-
     }
 
     private async Task SetItemImage(Gtk.Image image, string url)
@@ -66,7 +65,6 @@ public class ItemBox : Gtk.Box
             Pixbuf pixbuf = FromBytes(imageBytes);
             image.SetFromPixbuf(pixbuf);
         }
-
     }
 
     private async Task SetItemPrice(string marketHashName)
@@ -121,6 +119,7 @@ public class ItemBox : Gtk.Box
             _labelPrice.SetCssClasses([""]);
         }
     }
+
     private static Pixbuf FromBytes(byte[] data)
     {
         using var bytes = Bytes.New(data);

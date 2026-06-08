@@ -9,7 +9,7 @@ public class LeaderboardWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Gtk.ToggleButton _buttonSmallLeader;
     public string WindowName { get; }
     public string IconName { get; }
-    string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season2";
+    string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season3";
     private string[] regions = ["World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa"];
     private string title = "";
     private string subtitle = "";

@@ -27,6 +27,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     {
         builder.Connect(this);
     }
+
     public PreferencesDialog(ConfigurationManager configuration, string[] windowList) : this(new Gtk.Builder("PreferencesDialog.ui"), "_root")
     {
         _configuration = configuration;
@@ -102,12 +103,12 @@ public class PreferencesDialog : Adw.PreferencesDialog
         foreach (var item in Enum.GetNames<Currency>())
         {
             stringList.Append(item.ToString());
-
         }
         _currencyComboRow.SetModel(stringList);
         _currencyComboRow.SetSelected((uint)_configuration.Currency);
         _currencyComboRow.OnNotify += (_, _) => { _configuration.Currency = (int)_currencyComboRow.GetSelected(); };
     }
+
     private async System.Threading.Tasks.Task SetProfileDataAsync()
     {
         string data = await Globals.GetSteamID64(_steamProfileEntryRow.GetText(), _configuration.ApiKey);
