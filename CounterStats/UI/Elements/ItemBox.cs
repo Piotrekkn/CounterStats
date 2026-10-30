@@ -16,8 +16,8 @@ public class ItemBox : Gtk.Box
     [Gtk.Connect] private readonly Gtk.Label _labelType;
     [Gtk.Connect] private readonly Gtk.Label _labelPrice;
     [Gtk.Connect] private readonly Gtk.Button _buttonPrice;
-    private string marketPriceUrl = "https://steamcommunity.com/market/priceoverview/?appid=730&market_hash_name=";
-    private string marketCurrencyUrl = "&currency=";
+    private readonly string marketPriceUrl = "https://steamcommunity.com/market/priceoverview/?appid=730&market_hash_name=";
+    private readonly string marketCurrencyUrl = "&currency=";
     public string Name { get; set; }
 
     private ItemBox(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
@@ -57,7 +57,7 @@ public class ItemBox : Gtk.Box
         }
     }
 
-    private async Task SetItemImage(Gtk.Image image, string url)
+    private static async Task SetItemImage(Gtk.Image image, string url)
     {
         using (var webClient = new WebClient())
         {

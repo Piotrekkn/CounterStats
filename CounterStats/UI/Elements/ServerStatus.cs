@@ -6,8 +6,8 @@ public class ServerStatus : Gtk.Box
     [Gtk.Connect] private readonly Gtk.Label _capLabel;
     [Gtk.Connect] private readonly Gtk.Label _loadLabel;
     [Gtk.Connect] private readonly Gtk.Label _flagLabel;
-    private int flagSize = 78;
-    public string Name { get; }
+    private readonly int flagSize = 78;
+    public new string Name { get; }
     private ServerStatus(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
@@ -24,7 +24,7 @@ public class ServerStatus : Gtk.Box
         Globals.SetCssData(cssData);
         _flagLabel.AddCssClass("flagLabel");
     }
-    private string ColorLoad(string load)
+    private static string ColorLoad(string load)
     {
         string prefix = "Load: ";
         switch (load)
@@ -42,13 +42,13 @@ public class ServerStatus : Gtk.Box
         }
     }
 
-    private string ColorCapacity(string capacity)
+    private static string ColorCapacity(string capacity)
     {
         string prefix = "Capacity: ";
         return prefix + capacity;
     }
 
-    private string GetFlag(string serverName)
+    private static string GetFlag(string serverName)
     {
         switch (serverName)
         {

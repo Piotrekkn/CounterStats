@@ -8,8 +8,8 @@ public class FindPlayerWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Gtk.Entry _profileEntry;
     public string WindowName { get; }
     public string IconName { get; }
-    MainApp _mainApp;
-    ConfigurationManager _configuration;
+    readonly MainApp _mainApp;
+    readonly ConfigurationManager _configuration;
     private FindPlayerWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);

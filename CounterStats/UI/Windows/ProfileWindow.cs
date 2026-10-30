@@ -24,8 +24,8 @@ public class ProfileWindow : Gtk.Box, IWindow
     public string IconName { get; }
     private string title = "";
     private string subtitle = "";
-    private ConfigurationManager _configuration;
-    private MainApp _mainWindow;
+    private readonly ConfigurationManager _configuration;
+    private readonly MainApp _mainWindow;
     private string steamProfileID;
 
     private ProfileWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
@@ -90,7 +90,6 @@ public class ProfileWindow : Gtk.Box, IWindow
 
     private async Task SetProfileDataAsync()
     {
-        //string url = $"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + _configuration.ApiKey + "&steamids=" + steamProfile;
         string url = "https://steamcommunity.com/profiles/" + steamProfileID + "/?xml=1";
         string data = await Globals.FetchData(url);
         SteamProfile steamProfile = new SteamProfile(data);
@@ -185,7 +184,7 @@ public class ProfileWindow : Gtk.Box, IWindow
         }
     }
 
-    private async void SetAvatar(string url)
+    private async Task SetAvatar(string url)
     {
         string dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/avatar.jpg";
         if (!System.IO.File.Exists(dir) || !string.IsNullOrEmpty(steamProfileID))
@@ -197,7 +196,7 @@ public class ProfileWindow : Gtk.Box, IWindow
         _profileImage.SetFromFile(dir);
     }
 
-    private async void SetStats(string data)
+    private async Task SetStats(string data)
     {
         JObject obj = null;
         try
@@ -241,7 +240,7 @@ public class ProfileWindow : Gtk.Box, IWindow
                     total_kills_headshot = Convert.ToInt32(token.SelectToken("$.value"));
                 }
             }
-            _timeLabelValue.SetLabel(((int)total_time_played / 60 / 60).ToString() + "h");
+            _timeLabelValue.SetLabel((total_time_played / 60 / 60).ToString() + "h");
             _hsLabelValue.SetLabel(((double)total_kills_headshot * 100 / (double)total_kills).ToString("0.#####") + "%");
             _ratioLabelValue.SetLabel(((double)total_kills / (double)total_deaths).ToString("0.######"));
         }

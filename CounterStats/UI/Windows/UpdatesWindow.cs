@@ -12,8 +12,8 @@ public class UpdatesWindow : Gtk.Box, IWindow
     public string WindowName { get; }
     public string IconName { get; }
     private uint currentPos = 0;
-    private string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=";
-    private ConfigurationManager _configuration;
+    private readonly string baseURL = $"https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=730&count=";
+    private readonly ConfigurationManager _configuration;
 
     private UpdatesWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {

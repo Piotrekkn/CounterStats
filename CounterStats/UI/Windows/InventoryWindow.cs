@@ -13,14 +13,14 @@ public class InventoryWindow : Gtk.Box, IWindow
     public string IconName { get; }
     private string title = "";
     private string subtitle = "";
-    private ConfigurationManager _configuration;
-    private string imageUrl = "https://community.cloudflare.steamstatic.com/economy/image/";
-    private string baseURLstart = "https://steamcommunity.com/inventory/";
-    private string baseURLend = "/730/2";
-    private int minSize = 240;
-    private int maxSize = 680;
-    private int defaultSize = 380;
-    MainApp _mainApp;
+    private readonly ConfigurationManager _configuration;
+    private readonly string imageUrl = "https://community.cloudflare.steamstatic.com/economy/image/";
+    private readonly string baseURLstart = "https://steamcommunity.com/inventory/";
+    private readonly string baseURLend = "/730/2";
+    private readonly int minSize = 240;
+    private readonly int maxSize = 680;
+    private readonly int defaultSize = 380;
+    readonly MainApp _mainApp;
 
     List<ItemBox> itemBoxList = new List<ItemBox>();
 

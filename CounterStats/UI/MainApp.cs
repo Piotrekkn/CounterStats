@@ -16,13 +16,13 @@ public class MainApp : Adw.ApplicationWindow
     [Gtk.Connect] private readonly Adw.OverlaySplitView _splitView;
     [Gtk.Connect] private readonly MenuButton _menuButton;
     [Gtk.Connect] private readonly MenuButton _menuButtonHeader;
-    private ConfigurationManager _configurationManager;
-    private List<IWindow> _windowList = new List<IWindow>();
-    private int breakpointWidth = 1150;
-    private int defaultWidth = 940;
-    private int defaultHeight = 600;
+    private readonly ConfigurationManager _configurationManager;
+    private readonly List<IWindow> _windowList = new List<IWindow>();
+    private readonly int breakpointWidth = 1150;
+    private readonly int defaultWidth = 940;
+    private readonly int defaultHeight = 600;
 
-    private int[] separatorPositions = new int[] { 6, };
+    private readonly int[] separatorPositions = new int[] { 6, };
 
     private MainApp(Gtk.Builder builder, string name) : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), true))
     {

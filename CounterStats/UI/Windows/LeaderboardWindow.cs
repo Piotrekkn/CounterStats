@@ -9,11 +9,11 @@ public class LeaderboardWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Gtk.ToggleButton _buttonSmallLeader;
     public string WindowName { get; }
     public string IconName { get; }
-    string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season3";
-    private string[] regions = ["World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa"];
+    readonly string fetchURL = $"https://api.steampowered.com/ICSGOServers_730/GetLeaderboardEntries/v1?format=json&lbname=official_leaderboard_premier_season4";
+    private readonly string[] regions = ["World", "Europe", "North America", "Asia", "China", "Australia", "South America", "Africa"];
     private string title = "";
     private string subtitle = "";
-    MainApp _mainApp;
+    readonly MainApp _mainApp;
     private LeaderboardWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);

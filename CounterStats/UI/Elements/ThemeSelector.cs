@@ -5,7 +5,7 @@ namespace CounterStats.UI.Elements;
 
 public class ThemeSelector : Adw.Bin
 {
-  private string css =
+  private readonly string css =
 @".theme-selector checkbutton {
   min-height: 44px;
   min-width: 44px; 
@@ -62,7 +62,7 @@ background-color: #202020;
   [Gtk.Connect] private readonly Gtk.CheckButton _followButton;
   [Gtk.Connect] private readonly Gtk.CheckButton _darkButton;
   [Gtk.Connect] private readonly Gtk.CheckButton _lightButton;
-  private ConfigurationManager _configurationManager;
+  private readonly ConfigurationManager _configurationManager;
 
   private ThemeSelector(Gtk.Builder builder, string name) : base(new Adw.Internal.BinHandle(builder.GetPointer(name), false))
   {
@@ -107,7 +107,6 @@ background-color: #202020;
         _lightButton.Active = false;
         _darkButton.SetActive(true);
         break;
-      case 0:
       default:
         Adw.StyleManager.GetDefault().SetColorScheme(Adw.ColorScheme.Default);
         _darkButton.Active = false;

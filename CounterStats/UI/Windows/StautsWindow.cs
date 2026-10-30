@@ -18,8 +18,8 @@ public class StatusWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Adw.Banner _banner;
     public string WindowName { get; }
     public string IconName { get; }
-    private string url = "https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1?key=";
-    ConfigurationManager _configuration;
+    private readonly string url = "https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1?key=";
+    readonly ConfigurationManager _configuration;
     private StatusWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
@@ -105,7 +105,7 @@ public class StatusWindow : Gtk.Box, IWindow
         _sessionsLabel.SetMarkup(ColorServices(services.SelectToken("$.SteamCommunity").ToString()));
         _leaderboardsLabel.SetMarkup(ColorServices(services.SelectToken("$.Leaderboards").ToString()));
     }
-    private string ColorServices(string value)
+    private static string ColorServices(string value)
     {
         if (value == "idle" || value == "normal")
         {

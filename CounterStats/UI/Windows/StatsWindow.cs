@@ -8,9 +8,9 @@ public class StatsWindow : Gtk.Box, IWindow
     [Gtk.Connect] private readonly Adw.Banner _banner;
     public string WindowName { get; }
     public string IconName { get; }
-    private MainApp _mainApp;
-    private ConfigurationManager _configuration;
-    string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=";
+    private readonly MainApp _mainApp;
+    private readonly ConfigurationManager _configuration;
+    readonly string baseURL = $"https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/?appid=730&key=";
 
     private StatsWindow(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {

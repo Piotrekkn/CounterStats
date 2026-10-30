@@ -165,12 +165,12 @@ public class ConfigurationManager
         }
     }
     private int currentTheme;
-    private MainApp _mainApp;
-    private string cacheDir =
+    private readonly MainApp _mainApp;
+    private readonly string cacheDir =
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.cache/counterstats/";
-    private string configDir =
+    private readonly string configDir =
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/counterstats/";
-    private string configFile = "data.json";
+    private readonly string configFile = "data.json";
     public bool firstRun { get; private set; }
 
     public ConfigurationManager(MainApp mainApp)

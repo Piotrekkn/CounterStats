@@ -27,8 +27,8 @@ public class SetupDialog : Adw.Dialog
     [Gtk.Connect] private readonly Gtk.DropDown _miscPagecurrencyDropdown;
     [Gtk.Connect] private readonly Gtk.Switch _miscSidebarSwitch;
     private string profilePage, apiKey;
-    private string profileDesc = "You can obtain your steam web api key at: <a href='https://steamcommunity.com/dev/apikey'>steamcommunity.com/dev/apikey</a>";
-    private ConfigurationManager _configuration;
+    private readonly string profileDesc = "You can obtain your steam web api key at: <a href='https://steamcommunity.com/dev/apikey'>steamcommunity.com/dev/apikey</a>";
+    private readonly ConfigurationManager _configuration;
 
     private SetupDialog(Gtk.Builder builder, string name) : base(new Adw.Internal.DialogHandle(builder.GetPointer(name), false))
     {

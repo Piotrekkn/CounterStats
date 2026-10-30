@@ -21,7 +21,7 @@ public class PreferencesDialog : Adw.PreferencesDialog
     [Gtk.Connect] private readonly Adw.PreferencesPage _apiPage;
     [Gtk.Connect] private readonly Adw.ComboRow _currencyComboRow;
     [Gtk.Connect] private readonly Adw.ButtonRow _setupButton;
-    private ConfigurationManager _configuration;
+    private readonly ConfigurationManager _configuration;
 
     private PreferencesDialog(Gtk.Builder builder, string name) : base(new Adw.Internal.PreferencesDialogHandle(builder.GetPointer(name), false))
     {
